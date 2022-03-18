@@ -9,7 +9,7 @@
     "start": "npm run compile && node build/src/index.js",
     "lint": "eslint ./src --ext ts",
     "lint-fix": "eslint --fix ./src --ext ts",
-    "setup": "cp ./examples/bot.sqlite ./data/bot.sqlite"
+    "setup": "mkdir ./data && cp ./examples/bot.sqlite ./data/bot.sqlite"
   },
   "keywords": [],
   "author": "Christophe 'DrakeXorn' Bernard",

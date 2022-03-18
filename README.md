@@ -33,7 +33,7 @@ us [here](https://discord.gg/UhRcAKh5wJ)!
 
 ### Start the project
 
-Make sure you have [NodeJS LTS](https://nodejs.org/en/download/) installed on your machine before starting the program.
+Make sure you have [NodeJS LTS](https://nodejs.org/en/download/) installed on your computer before starting the program.
 
 Next, rename the ".env.sample" file into ".env" and fill in the blanks.
 
