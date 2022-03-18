@@ -60,7 +60,6 @@ jobs:
     - name: Clean install dependencies, build and setup
       run: |
         npm ci
-        npm run setup
         npm run compile
 
     # ℹ️ Command-line programs to run using the OS shell.
