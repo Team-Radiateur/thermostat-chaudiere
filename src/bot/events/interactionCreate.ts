@@ -26,7 +26,7 @@ module.exports = {
 
 			await command.execute(interaction);
 		} catch (error) {
-			logger.error(JSON.stringify(error));
+			logger.error((error as Error).stack as string);
 			if (!(await interaction.fetchReply())) {
 				await macros.replyToInteraction(
 					interaction,

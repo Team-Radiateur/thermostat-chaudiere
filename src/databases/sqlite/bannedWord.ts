@@ -1,5 +1,5 @@
 export type BannedWord = {
-	id: number,
+	id?: number,
 	word: string,
 	creation_date: Date,
 	enabled: boolean

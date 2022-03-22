@@ -12,6 +12,7 @@ export const env = {
 		botName: process.env.BOT_NAME || "",
 		commandPrefix: process.env.COMMAND_PREFIX || "",
 		guilds: (process.env.GUILDS || "").split(",").filter(guild => guild !== ""),
-		loggingChannel: process.env.LOGGING_CHANNEL || ""
+		loggingChannel: process.env.LOGGING_CHANNEL || "",
+		musicChannels: (process.env.MUSIC_CHANNELS || "").split(",").filter(channel => channel !== "")
 	}
 };

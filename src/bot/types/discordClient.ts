@@ -1,6 +1,9 @@
 import Database from "better-sqlite3";
-import { Client, Collection, Intents } from "discord.js";
+import { Client, Collection, Intents, TextChannel } from "discord.js";
+
 import { DiscordCommand } from "./discordEvents";
+import { Player } from "discord-player";
+import { logger } from "../../helpers/logger";
 
 export class DiscordClient {
 	public static database: Database.Database;
@@ -40,5 +43,42 @@ export class DiscordClient {
 		}
 
 		return DiscordClient.instance;
+	};
+}
+
+export class DiscordPlayer {
+	private static player: Player;
+
+	public static getInstance = (): Player => {
+		if (!DiscordPlayer.player) {
+			DiscordPlayer.player = new Player(
+				DiscordClient.getInstance(),
+			);
+
+			DiscordPlayer.player.on(
+				"trackStart",
+				(queue, track) =>
+					(queue.metadata as { channel: TextChannel })
+						.channel
+						.send(`🎶 | En cours de lecture **${track.title}** !`)
+			);
+			DiscordPlayer.player.on(
+				"channelEmpty",
+				(queue) => {
+					(queue.metadata as { channel: TextChannel })
+						.channel
+						.send("👀 | Tout le monde a quitté le canal, donc je me casse aussi");
+					queue.destroy(true);
+				}
+			);
+			DiscordPlayer.player.on(
+				"error",
+				(_, error) => {
+					logger.error(error.message);
+				}
+			);
+		}
+
+		return DiscordPlayer.player;
 	};
 }

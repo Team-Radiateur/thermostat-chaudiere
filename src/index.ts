@@ -1,7 +1,6 @@
 import startBot from "./bot";
 import { logger } from "./helpers/logger";
 
-
 const startApp = async (): Promise<void> => {
 	const botLoadingFinished = await startBot();
 
