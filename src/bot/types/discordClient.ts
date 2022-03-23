@@ -57,15 +57,15 @@ export class DiscordPlayer {
 
 			DiscordPlayer.player.on(
 				"trackStart",
-				(queue, track) =>
-					(queue.metadata as { channel: TextChannel })
+				async (queue, track) =>
+					await (queue.metadata as { channel: TextChannel })
 						.channel
 						.send(`🎶 | En cours de lecture **${track.title}** !`)
 			);
 			DiscordPlayer.player.on(
 				"channelEmpty",
-				(queue) => {
-					(queue.metadata as { channel: TextChannel })
+				async (queue) => {
+					await (queue.metadata as { channel: TextChannel })
 						.channel
 						.send("👀 | Tout le monde a quitté le canal, donc je me casse aussi");
 					queue.destroy(true);
@@ -73,8 +73,11 @@ export class DiscordPlayer {
 			);
 			DiscordPlayer.player.on(
 				"error",
-				(_, error) => {
+				async (queue, error) => {
 					logger.error(error.message);
+					await (queue.metadata as { channel: TextChannel })
+						.channel
+						.send("❌ | Une erreur est survenue lors de la lecture de la playlist");
 				}
 			);
 		}
