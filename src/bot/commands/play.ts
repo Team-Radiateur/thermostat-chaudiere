@@ -80,14 +80,24 @@ module.exports = {
 
 				return await interaction.followUp(
 					{
-						content: `⏱️ | Lecture du morceau **${track.title}** !`
+						content: `▶️ | Lecture du morceau **${track.title}** !`
 					}
 				);
 			}
 
+			let response = `👌 | Morceau **${track.title}** ajouté à la liste de lecture`;
+
+			if (queue.tracks.length - 1 > 0) {
+				response += "\nListe des prochaines musiques :\n";
+
+				queue.tracks.forEach((track, index) => {
+					response += `${index + 1}. ${track.title} (${track.url})\n`;
+				});
+			}
+
 			return await interaction.followUp(
 				{
-					content: `👌 | Morceau ajouté à la liste de lecture`
+					content: response
 				}
 			);
 		}

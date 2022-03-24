@@ -31,25 +31,17 @@ module.exports = {
 
 			skipList.length = 0;
 
-			let response = "👌 | Musique passée\n";
-
-			if (queue.tracks.length) {
-				response += "Liste des prochaines musiques :\n";
-
-				queue.tracks.forEach((track, index) => {
-					response += `${index + 1}. ${track.title} (${track.url})`;
-				});
-			}
-
 			return await macros.replyToInteraction(
 				interaction,
-				response
+				"👌 | Musique passée",
+				false
 			);
 		}
 
 		return await macros.replyToInteraction(
 			interaction,
-			`⏳ | ${people - skipList.length} personnes doivent encore voter pour passer cette musique`
+			`⏳ | ${people - skipList.length} personnes doivent encore voter pour passer cette musique`,
+			false
 		);
 	}
 } as DiscordCommand;
