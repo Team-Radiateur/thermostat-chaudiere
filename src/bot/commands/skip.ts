@@ -37,7 +37,7 @@ module.exports = {
 
 		return await macros.replyToInteraction(
 			interaction,
-			`👀 | ${people - skipList.length} personnes doivent encore voter pour passer cette musique`
+			`⏳ | ${people - skipList.length} personnes doivent encore voter pour passer cette musique`
 		);
 	}
 } as DiscordCommand;

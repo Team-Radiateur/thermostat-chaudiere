@@ -67,7 +67,7 @@ export class DiscordPlayer {
 				async (queue) => {
 					await (queue.metadata as { channel: TextChannel })
 						.channel
-						.send("👀 | Tout le monde a quitté le canal, donc je me casse aussi");
+						.send("😬 | Tout le monde a quitté le canal, donc je me casse aussi");
 					queue.destroy(true);
 				}
 			);
