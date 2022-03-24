@@ -4,9 +4,9 @@ import { DiscordEvent } from "../types/discordEvents";
 import { filter } from "../../helpers/botCommands";
 
 module.exports = {
-	name: "messageCreate",
+	name: "messageUpdate",
 	once: false,
-	execute: async (message: Message) => {
-		return await filter(message);
+	execute: async (_oldMessage: Message, newMessage: Message) => {
+		return await filter(newMessage);
 	}
 } as DiscordEvent;
