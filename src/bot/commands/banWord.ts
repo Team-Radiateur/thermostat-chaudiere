@@ -18,11 +18,14 @@ module.exports = {
 					.setName("mot")
 					.setDescription("Le mot à bannir")
 					.setRequired(true)
-		)
-	,
+		),
 	execute: async (interaction) => {
-		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR]))
-			return;
+		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
+			return await macros.replyToInteraction(
+				interaction,
+				"Eh oh, tu t'es pris pour qui, Carolo ?"
+			);
+		}
 
 		const toHandle = interaction.options.getString("mot");
 		const words = DiscordClient.database.prepare("select * from banned_words;").all() as BannedWord[];
@@ -52,6 +55,9 @@ module.exports = {
 			})();
 		}
 
-		await macros.replyToInteraction(interaction, "Liste des mots interdits mise à jour");
+		return await macros.replyToInteraction(
+			interaction,
+			"Liste des mots interdits mise à jour"
+		);
 	}
 } as DiscordCommand;
