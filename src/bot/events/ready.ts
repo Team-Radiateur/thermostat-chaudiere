@@ -10,7 +10,7 @@ module.exports = {
 
 		setInterval(() => {
 			const temperature = Math.floor(Math.random() * 70 + 21);
-			DiscordClient.getInstance().user?.setActivity(`Température de la Chaudière : ${temperature}°C`);
+			DiscordClient.getInstance().user?.setActivity(`Température : ${temperature}°C`);
 		}, 5000);
 	}
 } as DiscordEvent;
