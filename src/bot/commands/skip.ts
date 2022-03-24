@@ -25,14 +25,26 @@ module.exports = {
 			skipList.length === people
 			|| interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])
 		) {
-			if (queue.skip()) {
-				skipList.length = 0;
-
-				return await macros.replyToInteraction(
-					interaction,
-					"👌 | Musique passée"
-				);
+			while (!queue.skip()) {
+				// Wait for the queue to skip the current track
 			}
+
+			skipList.length = 0;
+
+			let response = "👌 | Musique passée\n";
+
+			if (queue.tracks.length) {
+				response += "Liste des prochaines musiques :\n";
+
+				queue.tracks.forEach((track, index) => {
+					response += `${index + 1}. ${track.title} (${track.url})`;
+				});
+			}
+
+			return await macros.replyToInteraction(
+				interaction,
+				response
+			);
 		}
 
 		return await macros.replyToInteraction(
