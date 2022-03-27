@@ -60,7 +60,7 @@ export class DiscordPlayer {
 				async (queue, track) =>
 					await (queue.metadata as { channel: TextChannel })
 						.channel
-						.send(`🎶 | En cours de lecture **${track.title}** !`)
+						.send(`🎶 | En cours de lecture **${track.title}** (${track.url}) !`)
 			);
 			DiscordPlayer.player.on(
 				"channelEmpty",
