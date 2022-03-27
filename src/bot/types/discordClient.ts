@@ -80,6 +80,14 @@ export class DiscordPlayer {
 						.send("❌ | Une erreur est survenue lors de la lecture de la playlist");
 				}
 			);
+			DiscordPlayer.player.on(
+				"queueEnd",
+				async () => {
+					await new Promise(
+						(resolve) => setTimeout(resolve, 30000)
+					);
+				}
+			);
 		}
 
 		return DiscordPlayer.player;

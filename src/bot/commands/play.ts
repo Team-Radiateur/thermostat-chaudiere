@@ -64,7 +64,12 @@ module.exports = {
 			await interaction.deferReply();
 			const track = await queue.player.search(uri, {
 				requestedBy: interaction.user
-			}).then(x => x.tracks[0]);
+			}).then(x => {
+				if (x.playlist) {
+					return x.tracks;
+				}
+				return x.tracks[0];
+			});
 			if (!track) {
 				return await interaction.followUp(
 					{
@@ -73,19 +78,25 @@ module.exports = {
 				);
 			}
 
-			await queue.addTrack(track);
+			if (track instanceof Array) {
+				await queue.addTracks(track);
+			} else {
+				await queue.addTrack(track);
+			}
+
+			const { title, url } = track instanceof Array ? track[0] : track;
 
 			if (!queue.playing) {
 				await queue.play();
 
 				return await interaction.followUp(
 					{
-						content: `▶️ | Lecture du morceau **${track.title}** !`
+						content: `▶️ | Lecture du morceau **${title}** !`
 					}
 				);
 			}
 
-			let response = `👌 | Morceau **${track.title}** ajouté à la liste de lecture`;
+			let response = `👌 | Morceau **${title}** (${url}) ajouté à la liste de lecture`;
 
 			if (queue.tracks.length - 1 > 0) {
 				response += "\nListe des prochaines musiques :\n";

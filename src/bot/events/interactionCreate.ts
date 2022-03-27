@@ -17,7 +17,7 @@ module.exports = {
 
 		try {
 			// eslint-disable-next-line max-len
-			logger.info(`${interaction.user.username}#${interaction.user.discriminator} a appelé la fonction ${(interaction).commandName}`);
+			logger.info(`${interaction.user.username}#${interaction.user.discriminator} a appelé la fonction ${interaction.toString()}`);
 
 			const command = DiscordClient.commands.get(interaction.commandName);
 
