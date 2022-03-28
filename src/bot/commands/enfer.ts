@@ -8,8 +8,10 @@ import {
 	AudioPlayerStatus,
 	createAudioPlayer,
 	createAudioResource,
+	getVoiceConnection,
 	joinVoiceChannel,
 	NoSubscriberBehavior,
+	VoiceConnection,
 	VoiceConnectionStatus
 } from "@discordjs/voice";
 import { logger } from "../../helpers/logger";
@@ -40,21 +42,25 @@ module.exports = {
 			"J'espère que tu sais ce que tu fais..."
 		);
 
-		const discordPlayerQueue = await DiscordPlayer.getInstance().getQueue(interaction.guild as Guild);
+		const discordPlayerQueue = DiscordPlayer.getInstance().getQueue(interaction.guild as Guild);
+
+		let connection: VoiceConnection | undefined;
 
 		if (discordPlayerQueue) {
 			discordPlayerQueue.setPaused(true);
+
+			connection = getVoiceConnection(channel.guild.id);
+		} else {
+			connection = joinVoiceChannel(
+				{
+					channelId: (channel.channel as VoiceChannel).id,
+					guildId: channel.guild.id,
+					adapterCreator: channel.guild.voiceAdapterCreator
+				},
+			);
 		}
 
-		const connection = joinVoiceChannel(
-			{
-				channelId: (channel.channel as VoiceChannel).id,
-				guildId: channel.guild.id,
-				adapterCreator: channel.guild.voiceAdapterCreator
-			},
-		);
-
-		connection.on(VoiceConnectionStatus.Ready, () => {
+		connection?.on(VoiceConnectionStatus.Ready, () => {
 			const player = createAudioPlayer(
 				{
 					debug: false,
@@ -65,14 +71,14 @@ module.exports = {
 			);
 
 			const sound = createAudioResource("./sounds/renarde.m4a");
-			connection.subscribe(player);
+			connection?.subscribe(player);
 			player.play(sound);
 
 			player.on(AudioPlayerStatus.Idle, () => {
 				if (discordPlayerQueue) {
 					discordPlayerQueue.setPaused(false);
 				} else {
-					connection.disconnect();
+					connection?.disconnect();
 				}
 			});
 
