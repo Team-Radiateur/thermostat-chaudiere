@@ -24,7 +24,7 @@ module.exports = {
 		}
 
 		const { queue } = commandData;
-		const newVolume = interaction.options.getNumber("nouveau");
+		const newVolume = interaction.options.getInteger("nouveau");
 
 		if (!newVolume) {
 			return await macros.replyToInteraction(
