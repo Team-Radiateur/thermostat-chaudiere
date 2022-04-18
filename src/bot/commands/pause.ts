@@ -3,11 +3,9 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { DiscordCommand } from "../types/discordEvents";
 import { macros } from "../../helpers/macros";
 
-module.exports = {
-	data: new SlashCommandBuilder()
-		.setName("pause")
-		.setDescription("Met la lecture en pause"),
-	execute: async (interaction) => {
+const pause: DiscordCommand = {
+	data: new SlashCommandBuilder().setName("pause").setDescription("Met la lecture en pause"),
+	execute: async interaction => {
 		const commandData = await macros.checkCommand(interaction);
 
 		if (!commandData) {
@@ -22,9 +20,8 @@ module.exports = {
 
 		queue.setPaused(true);
 
-		return await macros.replyToInteraction(
-			interaction,
-			"⏸ | La lecture est en pause"
-		);
+		return await macros.replyToInteraction(interaction, "⏸ | La lecture est en pause");
 	}
-} as DiscordCommand;
+};
+
+module.exports = pause;

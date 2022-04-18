@@ -3,11 +3,11 @@ import { CommandInteraction } from "discord.js";
 
 import { DiscordCommand } from "../types/discordEvents";
 
-module.exports = {
-	data: new SlashCommandBuilder()
-		.setName("ping")
-		.setDescription("Répond avec Pong!"),
+const ping: DiscordCommand = {
+	data: new SlashCommandBuilder().setName("ping").setDescription("Répond avec Pong!"),
 	async execute(interaction: CommandInteraction) {
 		await interaction.reply("Pong!");
-	},
-} as DiscordCommand;
+	}
+};
+
+module.exports = ping;

@@ -4,19 +4,21 @@ import { env } from "../../config/env";
 import { DiscordPlayer } from "../bot/types/discordClient";
 
 const notImplemented = () => {
-	const error = Object.assign(new Error("Not implemented"), { code: "ERR_UNIMPLEMENTED" });
+	const error = Object.assign(new Error("Not implemented"), {
+		code: "ERR_UNIMPLEMENTED"
+	});
 
-	if (typeof Error.captureStackTrace === "function")
-		Error.captureStackTrace(error, notImplemented);
+	if (typeof Error.captureStackTrace === "function") Error.captureStackTrace(error, notImplemented);
 
 	throw error;
 };
 
 const todo = () => {
-	const error = Object.assign(new Error("Not yet implemented"), { code: "ERR_TODO" });
+	const error = Object.assign(new Error("Not yet implemented"), {
+		code: "ERR_TODO"
+	});
 
-	if (typeof Error.captureStackTrace === "function")
-		Error.captureStackTrace(error, todo);
+	if (typeof Error.captureStackTrace === "function") Error.captureStackTrace(error, todo);
 
 	throw error;
 };
@@ -33,12 +35,10 @@ const replyToInteraction = async (
 	}
 };
 
-const checkCommand = async (
-	interaction: CommandInteraction
-) => {
+const checkCommand = async (interaction: CommandInteraction) => {
 	if (
-		!env.bot.musicChannels.find(channel => channel === interaction.channel?.id)
-		&& !interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])
+		!env.bot.musicChannels.find(channel => channel === interaction.channel?.id) &&
+		!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])
 	) {
 		return await replyToInteraction(
 			interaction,
@@ -64,14 +64,11 @@ const checkCommand = async (
 	let queue = DiscordPlayer.getInstance().getQueue(channel?.guild as Guild);
 
 	if (!queue) {
-		queue = DiscordPlayer.getInstance().createQueue(
-			channel?.guild as Guild,
-			{
-				metadata: {
-					channel: interaction.channel
-				}
+		queue = DiscordPlayer.getInstance().createQueue(channel?.guild as Guild, {
+			metadata: {
+				channel: interaction.channel
 			}
-		);
+		});
 	}
 
 	return { queue, channel };

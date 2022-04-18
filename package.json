@@ -1,106 +1,113 @@
 {
-  "name": "chaudiere",
-  "version": "1.0.0",
-  "description": "Le tant attendu bot de la Team Radiateur",
-  "main": "build/index.js",
-  "scripts": {
-    "clean": "rm -rf ./build",
-    "compile": "npm run clean && tsc",
-    "start": "npm run compile && node build/src/index.js",
-    "lint": "eslint ./src --ext ts",
-    "lint-fix": "eslint --fix ./src --ext ts",
-    "setup": "mkdir ./data && cp ./examples/bot.sqlite ./data/bot.sqlite"
-  },
-  "keywords": [],
-  "author": "Christophe 'DrakeXorn' Bernard",
-  "license": "MIT",
-  "dependencies": {
-    "@discordjs/builders": "0.12.0",
-    "@discordjs/collection": "0.5.0",
-    "@discordjs/rest": "0.3.0",
-    "@discordjs/voice": "0.8.0",
-    "@discordjs/opus": "0.7.0",
-    "axios": "0.26.0",
-    "better-sqlite3": "7.5.0",
-    "bufferutil": "4.0.6",
-    "discord-markdown": "2.5.1",
-    "discord-player": "5.2.2",
-    "discord.js": "13.6.0",
-    "dotenv": "16.0.0",
-    "erlpack": "0.1.4",
-    "express": "4.17.3",
-    "ffmpeg-static": "5.0.0",
-    "sodium": "3.0.2",
-    "fluent-ffmpeg": "^2.1.2",
-    "utf-8-validate": "5.0.8",
-    "ytdl-core": "4.11.0",
-    "zlib-sync": "0.1.7"
-  },
-  "devDependencies": {
-    "@types/better-sqlite3": "7.5.0",
-    "@types/express": "4.17.13",
-    "@types/node": "17.0.21",
-    "@typescript-eslint/eslint-plugin": "5.13.0",
-    "@typescript-eslint/parser": "5.13.0",
-    "discord-api-types": "0.27.3",
-    "eslint": "8.10.0",
-    "typescript": "4.6.2"
-  },
-  "eslintConfig": {
-    "env": {
-      "es2021": true
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "ecmaVersion": "latest",
-      "sourceType": "module"
-    },
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "rules": {
-      "import/extensions": [
-        0
-      ],
-      "import/prefer-default-export": "off",
-      "no-use-before-define": "off",
-      "@typescript-eslint/no-use-before-define": [
-        "error"
-      ],
-      "indent": "off",
-      "max-len": [
-        "error",
-        120
-      ],
-      "semi": "error",
-      "prefer-destructuring": "error",
-      "space-in-parens": "off",
-      "space-before-blocks": "warn",
-      "object-curly-spacing": [
-        "error",
-        "always"
-      ],
-      "no-trailing-spaces": "error",
-      "@typescript-eslint/no-unused-vars": "error",
-      "no-unused-vars": "off",
-      "quotes": [
-        "error",
-        "double",
-        {
-          "allowTemplateLiterals": true
-        }
-      ],
-      "@typescript-eslint/indent": [
-        "error",
-        "tab",
-        {
-          "SwitchCase": 1
-        }
-      ]
-    }
-  }
+	"name": "chaudiere",
+	"version": "1.0.0",
+	"description": "Le tant attendu bot de la Team Radiateur",
+	"main": "build/index.js",
+	"scripts": {
+		"clean": "rm -rf ./build",
+		"compile": "npm run clean && tsc",
+		"start": "npm run compile && node build/src/index.js",
+		"lint": "eslint ./src --ext ts",
+		"lint-fix": "eslint --fix ./src --ext ts",
+		"setup": "mkdir ./data && cp ./examples/bot.sqlite ./data/bot.sqlite",
+		"prepare": "husky install"
+	},
+	"lint-staged": {
+		"**/*": "prettier --write --ignore-unknown"
+	},
+	"keywords": [],
+	"author": "Christophe 'DrakeXorn' Bernard",
+	"license": "MIT",
+	"dependencies": {
+		"@discordjs/builders": "0.12.0",
+		"@discordjs/collection": "0.5.0",
+		"@discordjs/opus": "0.7.0",
+		"@discordjs/rest": "0.3.0",
+		"@discordjs/voice": "0.8.0",
+		"axios": "0.26.0",
+		"better-sqlite3": "7.5.0",
+		"bufferutil": "4.0.6",
+		"discord-markdown": "2.5.1",
+		"discord-player": "5.2.2",
+		"discord.js": "13.6.0",
+		"dotenv": "16.0.0",
+		"erlpack": "0.1.4",
+		"express": "4.17.3",
+		"ffmpeg-static": "5.0.0",
+		"fluent-ffmpeg": "^2.1.2",
+		"sodium": "3.0.2",
+		"utf-8-validate": "5.0.8",
+		"ytdl-core": "4.11.0",
+		"zlib-sync": "0.1.7"
+	},
+	"devDependencies": {
+		"@types/better-sqlite3": "7.5.0",
+		"@types/express": "4.17.13",
+		"@types/node": "17.0.21",
+		"@typescript-eslint/eslint-plugin": "5.13.0",
+		"@typescript-eslint/parser": "5.13.0",
+		"discord-api-types": "0.27.3",
+		"eslint": "8.10.0",
+		"husky": "^7.0.4",
+		"lint-staged": "^12.3.8",
+		"prettier-eslint": "13.0.0",
+		"typescript": "4.6.2"
+	},
+	"eslintConfig": {
+		"env": {
+			"es2021": true
+		},
+		"extends": [
+			"eslint:recommended",
+			"plugin:@typescript-eslint/recommended"
+		],
+		"parser": "@typescript-eslint/parser",
+		"parserOptions": {
+			"ecmaVersion": "latest",
+			"sourceType": "module"
+		},
+		"plugins": [
+			"@typescript-eslint"
+		],
+		"rules": {
+			"import/extensions": [
+				0
+			],
+			"import/prefer-default-export": "off",
+			"no-use-before-define": "off",
+			"@typescript-eslint/no-use-before-define": [
+				"error"
+			],
+			"indent": "off",
+			"max-len": [
+				"error",
+				120
+			],
+			"semi": "error",
+			"prefer-destructuring": "error",
+			"space-in-parens": "off",
+			"space-before-blocks": "warn",
+			"object-curly-spacing": [
+				"error",
+				"always"
+			],
+			"no-trailing-spaces": "error",
+			"@typescript-eslint/no-unused-vars": "error",
+			"no-unused-vars": "off",
+			"quotes": [
+				"error",
+				"double",
+				{
+					"allowTemplateLiterals": true
+				}
+			],
+			"@typescript-eslint/indent": [
+				"error",
+				"tab",
+				{
+					"SwitchCase": 1
+				}
+			]
+		}
+	}
 }

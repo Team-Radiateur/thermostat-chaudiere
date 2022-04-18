@@ -4,18 +4,14 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { DiscordCommand } from "../types/discordEvents";
 import { macros } from "../../helpers/macros";
 
-module.exports = {
+const play: DiscordCommand = {
 	data: new SlashCommandBuilder()
 		.setName("play")
 		.setDescription("Lance la lecture ou ajoute une chanson à la liste")
-		.addStringOption(
-			(option) =>
-				option
-					.setName("musique")
-					.setDescription("La musique à jouer")
-					.setRequired(false)
-		),
-	execute: async (interaction) => {
+		.addStringOption(option =>
+			option.setName("musique").setDescription("La musique à jouer").setRequired(false)
+		) as SlashCommandBuilder,
+	execute: async interaction => {
 		const commandData = await macros.checkCommand(interaction);
 
 		if (!commandData) {
@@ -42,10 +38,7 @@ module.exports = {
 			}
 
 			queue.setPaused(false);
-			return await macros.replyToInteraction(
-				interaction,
-				"▶️ | Reprise de la lecture..."
-			);
+			return await macros.replyToInteraction(interaction, "▶️ | Reprise de la lecture...");
 		} else {
 			try {
 				if (!queue.connection) {
@@ -54,28 +47,24 @@ module.exports = {
 			} catch (error) {
 				queue.destroy();
 
-				return await macros.replyToInteraction(
-					interaction,
-					"😬 | Je n'ai pas su me connecter au canal",
-					true
-				);
+				return await macros.replyToInteraction(interaction, "😬 | Je n'ai pas su me connecter au canal", true);
 			}
 
 			await interaction.deferReply();
-			const track = await queue.player.search(uri, {
-				requestedBy: interaction.user
-			}).then(x => {
-				if (x.playlist) {
-					return x.tracks;
-				}
-				return x.tracks[0];
-			});
-			if (!track) {
-				return await interaction.followUp(
-					{
-						content: `❌ | Le morceau **${uri}** n'a pas été trouvé !`
+			const track = await queue.player
+				.search(uri, {
+					requestedBy: interaction.user
+				})
+				.then(x => {
+					if (x.playlist) {
+						return x.tracks;
 					}
-				);
+					return x.tracks[0];
+				});
+			if (!track) {
+				return await interaction.followUp({
+					content: `❌ | Le morceau **${uri}** n'a pas été trouvé !`
+				});
 			}
 
 			if (track instanceof Array) {
@@ -89,11 +78,9 @@ module.exports = {
 			if (!queue.playing) {
 				await queue.play();
 
-				return await interaction.followUp(
-					{
-						content: `▶️ | Lecture du morceau **${title}** !`
-					}
-				);
+				return await interaction.followUp({
+					content: `▶️ | Lecture du morceau **${title}** !`
+				});
 			}
 
 			let response = `👌 | Morceau **${title}** (${url}) ajouté à la liste de lecture`;
@@ -106,11 +93,11 @@ module.exports = {
 				});
 			}
 
-			return await interaction.followUp(
-				{
-					content: response
-				}
-			);
+			return await interaction.followUp({
+				content: response
+			});
 		}
 	}
-} as DiscordCommand;
+};
+
+module.exports = play;

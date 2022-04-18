@@ -51,43 +51,30 @@ export class DiscordPlayer {
 
 	public static getInstance = (): Player => {
 		if (!DiscordPlayer.player) {
-			DiscordPlayer.player = new Player(
-				DiscordClient.getInstance(),
-			);
+			DiscordPlayer.player = new Player(DiscordClient.getInstance());
 
 			DiscordPlayer.player.on(
 				"trackStart",
 				async (queue, track) =>
-					await (queue.metadata as { channel: TextChannel })
-						.channel
-						.send(`🎶 | En cours de lecture **${track.title}** (${track.url}) !`)
+					await (queue.metadata as { channel: TextChannel }).channel.send(
+						`🎶 | En cours de lecture **${track.title}** (${track.url}) !`
+					)
 			);
-			DiscordPlayer.player.on(
-				"channelEmpty",
-				async (queue) => {
-					await (queue.metadata as { channel: TextChannel })
-						.channel
-						.send("😬 | Tout le monde a quitté le canal, donc je me casse aussi");
-					queue.destroy(true);
-				}
-			);
-			DiscordPlayer.player.on(
-				"error",
-				async (queue, error) => {
-					logger.error(error.message);
-					await (queue.metadata as { channel: TextChannel })
-						.channel
-						.send("❌ | Une erreur est survenue lors de la lecture de la playlist");
-				}
-			);
-			DiscordPlayer.player.on(
-				"queueEnd",
-				async () => {
-					await new Promise(
-						(resolve) => setTimeout(resolve, 30000)
-					);
-				}
-			);
+			DiscordPlayer.player.on("channelEmpty", async queue => {
+				await (queue.metadata as { channel: TextChannel }).channel.send(
+					"😬 | Tout le monde a quitté le canal, donc je me casse aussi"
+				);
+				queue.destroy(true);
+			});
+			DiscordPlayer.player.on("error", async (queue, error) => {
+				logger.error(error.message);
+				await (queue.metadata as { channel: TextChannel }).channel.send(
+					"❌ | Une erreur est survenue lors de la lecture de la playlist"
+				);
+			});
+			DiscordPlayer.player.on("queueEnd", async () => {
+				await new Promise(resolve => setTimeout(resolve, 30000));
+			});
 		}
 
 		return DiscordPlayer.player;

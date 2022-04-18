@@ -7,13 +7,10 @@ import { macros } from "../../helpers/macros";
 import { DiscordCommand } from "../types/discordEvents";
 import { DiscordClient } from "../types/discordClient";
 
-module.exports = {
-	data: new SlashCommandBuilder()
-		.setName("liste_mots")
-		.setDescription("Affiche la liste des mots bannis"),
-	execute: async (interaction) => {
-		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR]))
-			return;
+const showBannedWordsList: DiscordCommand = {
+	data: new SlashCommandBuilder().setName("liste_mots").setDescription("Affiche la liste des mots bannis"),
+	execute: async interaction => {
+		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) return;
 
 		const words = DiscordClient.database.prepare("select * from banned_words;").all() as BannedWord[];
 		const list = words
@@ -25,4 +22,6 @@ module.exports = {
 			list.length ? `Voici la liste des mots interdits :\n${list}` : "Il n'y a pas de mots dans la liste"
 		);
 	}
-} as DiscordCommand;
+};
+
+module.exports = showBannedWordsList;

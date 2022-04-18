@@ -8,24 +8,24 @@ import { BannedWord } from "../../databases/sqlite/bannedWord";
 import { macros } from "../../helpers/macros";
 import { string } from "../../helpers/string";
 
-module.exports = {
+const allowWord: DiscordCommand = {
 	data: new SlashCommandBuilder()
 		.setName("permettre_mot")
 		.setDescription("Permet le mot ou la phrase spécifié(e)")
-		.addStringOption(
-			(option) =>
-				option
-					.setName("mot")
-					.setDescription("Le mot à permettre")
-					.setRequired(true)
-		),
-	execute: async (interaction) => {
+		.addStringOption(option =>
+			option.setName("mot").setDescription("Le mot à permettre").setRequired(true)
+		) as SlashCommandBuilder,
+	execute: async interaction => {
 		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR]))
-			return;
+			return await macros.replyToInteraction(
+				interaction,
+				"Tout doux, bijou... T'as cru que t'avais le droit de faire ça ?",
+				true
+			);
 
 		const toHandle = interaction.options.getString("mot");
 		const words = DiscordClient.database.prepare("select * from banned_words;").all() as BannedWord[];
-		const filteredWords = words.filter((obj) => string.normalized(obj.word) === string.normalized(toHandle || ""));
+		const filteredWords = words.filter(obj => string.normalized(obj.word) === string.normalized(toHandle || ""));
 
 		if (filteredWords.length && words[0].enabled) {
 			const updateStatement = DiscordClient.database.prepare(
@@ -34,16 +34,16 @@ module.exports = {
 			);
 
 			DiscordClient.database.transaction(() => {
-				updateStatement.run(
-					{
-						enabled: 0,
-						update_date: new Date().toLocaleTimeString(),
-						id: words[0].id
-					}
-				);
+				updateStatement.run({
+					enabled: 0,
+					update_date: new Date().toLocaleTimeString(),
+					id: words[0].id
+				});
 			})();
 
 			await macros.replyToInteraction(interaction, "Mot correctement mis à jour");
 		}
 	}
-} as DiscordCommand;
+};
+
+module.exports = allowWord;

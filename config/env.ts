@@ -4,15 +4,18 @@ dotenv.config();
 
 export const env = {
 	env: process.env.ENV || process.env.NODE_ENV || "local", // ["local", "dev", "preprod", "production"]
+	api: {
+		port: process.env.SERVER_PORT || 8081
+	},
 	bot: {
-		api_port: process.env.SERVER_PORT || 8081,
 		token: process.env.BOT_TOKEN || "",
 		clientId: process.env.CLIENT_ID || "",
 		ownerId: process.env.OWNER_ID || "",
 		botName: process.env.BOT_NAME || "",
 		commandPrefix: process.env.COMMAND_PREFIX || "",
 		guilds: (process.env.GUILDS || "").split(",").filter(guild => guild !== ""),
-		loggingChannel: process.env.LOGGING_CHANNEL || "",
+		voiceLoggingChannel: process.env.VOICE_LOGGING_CHANNEL || "",
+		userUpdateLoggingChannel: process.env.USER_UPDATE_LOGGING_CHANNEL || "",
 		musicChannels: (process.env.MUSIC_CHANNELS || "").split(",").filter(channel => channel !== "")
 	}
 };

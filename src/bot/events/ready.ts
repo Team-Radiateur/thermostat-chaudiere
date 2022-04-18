@@ -2,7 +2,7 @@ import { logger } from "../../helpers/logger";
 import { DiscordEvent } from "../types/discordEvents";
 import { DiscordClient } from "../types/discordClient";
 
-module.exports = {
+const ready: DiscordEvent = {
 	name: "ready",
 	once: true,
 	execute: () => {
@@ -13,4 +13,6 @@ module.exports = {
 			DiscordClient.getInstance().user?.setActivity(`Température : ${temperature}°C`);
 		}, 5000);
 	}
-} as DiscordEvent;
+};
+
+module.exports = ready;

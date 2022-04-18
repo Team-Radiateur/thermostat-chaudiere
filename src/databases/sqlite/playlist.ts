@@ -1,6 +1,6 @@
 export type PlaylistItem = {
-	id: number,
-	url: string,
-	title: string,
-	discord_snowflake: string
+	id: number;
+	url: string;
+	title: string;
+	discord_snowflake: string;
 };

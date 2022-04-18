@@ -3,10 +3,12 @@ import { Message } from "discord.js";
 import { DiscordEvent } from "../types/discordEvents";
 import { filter } from "../../helpers/botCommands";
 
-module.exports = {
+const messageUpdate: DiscordEvent = {
 	name: "messageUpdate",
 	once: false,
 	execute: async (_oldMessage: Message, newMessage: Message) => {
 		return await filter(newMessage);
 	}
-} as DiscordEvent;
+};
+
+module.exports = messageUpdate;

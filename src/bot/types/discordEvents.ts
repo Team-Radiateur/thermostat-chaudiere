@@ -1,13 +1,14 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { ClientEvents, CommandInteraction } from "discord.js";
+import { CommandInteraction, ConstantsEvents } from "discord.js";
+import { ValueOf } from "../../helpers/types";
 
 export type DiscordEvent = {
-	name: keyof ClientEvents,
-	once: boolean,
-	execute: (() => void) | (() => Promise<void>)
-}
+	name: ValueOf<ConstantsEvents>;
+	once: boolean;
+	execute: ((...data: never) => void) | ((...data: never) => Promise<void>);
+};
 
 export type DiscordCommand = {
-	data: SlashCommandBuilder,
-	execute: (interaction: CommandInteraction) => Promise<void>
-}
+	data: SlashCommandBuilder;
+	execute: (interaction: CommandInteraction) => Promise<unknown>;
+};

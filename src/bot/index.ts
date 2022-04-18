@@ -31,10 +31,7 @@ const startBot = async (): Promise<boolean> => {
 
 			for (const guild of env.bot.guilds) {
 				logger.info(`Refreshing ${guild}'s commands...`);
-				await rest.put(
-					Routes.applicationGuildCommands(env.bot.clientId, guild),
-					{ body: commands },
-				);
+				await rest.put(Routes.applicationGuildCommands(env.bot.clientId, guild), { body: commands });
 			}
 
 			logger.info("Successfully reloaded application (/) commands.");
@@ -65,7 +62,7 @@ const startBot = async (): Promise<boolean> => {
 	await client.login(env.bot.token);
 
 	while (!fullyLoaded) {
-		await new Promise((resolve) => setTimeout(resolve, 200));
+		await new Promise(resolve => setTimeout(resolve, 200));
 	}
 
 	return true;

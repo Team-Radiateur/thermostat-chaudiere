@@ -16,7 +16,7 @@ import {
 } from "@discordjs/voice";
 import { logger } from "../../helpers/logger";
 
-module.exports = {
+const enfer: DiscordCommand = {
 	data: new SlashCommandBuilder()
 		.setName("renarde")
 		.setDescription("Autocomplétion de la Renarde de ses morts"),
@@ -87,4 +87,6 @@ module.exports = {
 			});
 		});
 	}
-} as DiscordCommand;
+};
+
+module.exports = enfer;
