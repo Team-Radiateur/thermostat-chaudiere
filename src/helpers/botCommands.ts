@@ -5,7 +5,7 @@ import { BannedWord } from "../databases/sqlite/bannedWord";
 import { string } from "./string";
 
 export const filter = async (message: Message) => {
-	if (message.author.bot) return;
+	if (message.author.bot || message.member?.permissions?.has("ADMINISTRATOR")) return;
 
 	logger.info(`${message.author.username}#${message.author.discriminator} a écrit "${message}"`);
 
