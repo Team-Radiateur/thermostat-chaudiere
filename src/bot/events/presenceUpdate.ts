@@ -5,7 +5,9 @@ const presenceUpdate: DiscordEvent = {
 	name: "presenceUpdate",
 	once: false,
 	execute: async (oldPresence: Presence | undefined, newPresence: Presence) => {
-		console.log(oldPresence, newPresence);
+		oldPresence;
+		newPresence;
+		console.log("Presence update detected");
 	}
 };
 
