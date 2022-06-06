@@ -1,26 +1,16 @@
 import { DiscordCommand } from "../types/discordEvents";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Guild, GuildMember, Permissions, VoiceChannel } from "discord.js";
+import { Guild, GuildMember, Permissions } from "discord.js";
 
 import { macros } from "../../helpers/macros";
-import { DiscordPlayer } from "../types/discordClient";
-import {
-	AudioPlayerStatus,
-	createAudioPlayer,
-	createAudioResource,
-	getVoiceConnection,
-	joinVoiceChannel,
-	NoSubscriberBehavior,
-	VoiceConnection,
-	VoiceConnectionStatus
-} from "@discordjs/voice";
 import { logger } from "../../helpers/logger";
+import { DiscordPlayer } from "../types/discordClient";
 
-const enfer: DiscordCommand = {
-	data: new SlashCommandBuilder()
-		.setName("renarde")
-		.setDescription("Autocomplétion de la Renarde de ses morts"),
-	execute: async (interaction) => {
+const demonFile = `${__dirname}/../../../../sounds/renarde.m4a`;
+
+const hell: DiscordCommand = {
+	data: new SlashCommandBuilder().setName("renarde").setDescription("Autocomplétion de la Renarde de ses morts"),
+	execute: async interaction => {
 		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
 			return await macros.replyToInteraction(
 				interaction,
@@ -30,63 +20,43 @@ const enfer: DiscordCommand = {
 
 		const channel = (interaction.member as GuildMember).voice;
 
-		if (!channel) {
-			return await macros.replyToInteraction(
-				interaction,
-				"Tu dois être dans un salon vocal pour faire ça !"
-			);
+		if (!channel || !channel.channel) {
+			return await macros.replyToInteraction(interaction, "Tu dois être dans un salon vocal pour faire ça !");
 		}
 
-		await macros.replyToInteraction(
-			interaction,
-			"J'espère que tu sais ce que tu fais..."
+		await macros.replyToInteraction(interaction, "J'espère que tu sais ce que tu fais...");
+
+		logger.info(
+			`Eh merde, l'autre con de ${
+				(interaction.member as GuildMember).user.username
+			} a permis à la fille du Démon d'ouvrir sa gueule...`
 		);
 
-		const discordPlayerQueue = DiscordPlayer.getInstance().getQueue(interaction.guild as Guild);
+		let queue = DiscordPlayer.getInstance().getQueue((interaction.guild as Guild).id);
 
-		let connection: VoiceConnection | undefined;
-
-		if (discordPlayerQueue) {
-			discordPlayerQueue.setPaused(true);
-
-			connection = getVoiceConnection(channel.guild.id);
+		if (queue) {
+			if (queue.isPlaying) {
+				await queue.play(demonFile, {
+					immediate: true,
+					requestedBy: (interaction.member as GuildMember).user
+				});
+			}
 		} else {
-			connection = joinVoiceChannel(
-				{
-					channelId: (channel.channel as VoiceChannel).id,
-					guildId: channel.guild.id,
-					adapterCreator: channel.guild.voiceAdapterCreator
-				},
-			);
+			queue = DiscordPlayer.getInstance().createQueue((interaction.guild as Guild).id);
+
+			try {
+				await queue.join(channel.channel);
+			} catch (error) {
+				return await macros.replyToInteraction(interaction, "😬 | Je n'ai pas su me connecter au canal", true);
+			}
+
+			await queue.play(demonFile, {
+				immediate: true,
+				requestedBy: (interaction.member as GuildMember).user,
+				data: {}
+			});
 		}
-
-		connection?.on(VoiceConnectionStatus.Ready, () => {
-			const player = createAudioPlayer(
-				{
-					debug: false,
-					behaviors: {
-						noSubscriber: NoSubscriberBehavior.Stop,
-					}
-				}
-			);
-
-			const sound = createAudioResource("./sounds/renarde.m4a");
-			connection?.subscribe(player);
-			player.play(sound);
-
-			player.on(AudioPlayerStatus.Idle, () => {
-				if (discordPlayerQueue) {
-					discordPlayerQueue.setPaused(false);
-				} else {
-					connection?.disconnect();
-				}
-			});
-
-			player.on("error", (err) => {
-				logger.error(err.message);
-			});
-		});
 	}
 };
 
-module.exports = enfer;
+module.exports = hell;

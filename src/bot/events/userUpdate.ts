@@ -15,7 +15,7 @@ const userUpdate: DiscordEvent = {
 		if (!loggingChannel || !loggingChannel.isText()) return;
 		let embed = new MessageEmbed()
 			.setTitle(bold(`${oldUser.tag} a mis à jour son profil !`))
-			.setColor("#00ffff")
+			.setColor(env.bot.color)
 			.setAuthor({ name: oldUser.tag, iconURL: oldUser.displayAvatarURL() })
 			.setFooter({ text: `ID de l'utilisateur: ${newUser.id} • ${new Date().toLocaleString()}` });
 

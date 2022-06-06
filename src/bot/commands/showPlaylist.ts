@@ -18,8 +18,10 @@ const showPlaylist: DiscordCommand = {
 
 		let response = "🎵 | Voici la liste des prochains morceaux à jouer :\n";
 
-		queue.tracks.forEach((track, index) => {
-			response += `${index + 1}. ${track.title} (${track.url})`;
+		queue.songs.forEach((song, index) => {
+			if (index !== 0 && !song.name.includes("renarde.m4a")) {
+				response += `${index + 1}. ${song.name} (${song.url})`;
+			}
 		});
 
 		return await macros.replyToInteraction(interaction, response);

@@ -1,9 +1,10 @@
 import Database from "better-sqlite3";
-import { Client, Collection, Intents, TextChannel } from "discord.js";
+import { Client, Collection, Intents, Snowflake, TextChannel } from "discord.js";
+import { Player } from "discord-music-player";
 
 import { DiscordCommand } from "./discordEvents";
-import { Player } from "discord-player";
 import { logger } from "../../helpers/logger";
+import { env } from "../../../config/env";
 
 export class DiscordClient {
 	public static database: Database.Database;
@@ -48,29 +49,42 @@ export class DiscordClient {
 
 export class DiscordPlayer {
 	private static player: Player;
+	private static channels: Collection<Snowflake, TextChannel>;
 
 	public static getInstance = (): Player => {
 		if (!DiscordPlayer.player) {
-			DiscordPlayer.player = new Player(DiscordClient.getInstance());
-
-			DiscordPlayer.player.on(
-				"trackStart",
-				async (queue, track) =>
-					await (queue.metadata as { channel: TextChannel }).channel.send(
-						`🎶 | En cours de lecture **${track.title}** (${track.url}) !`
-					)
-			);
-			DiscordPlayer.player.on("channelEmpty", async queue => {
-				await (queue.metadata as { channel: TextChannel }).channel.send(
-					"😬 | Tout le monde a quitté le canal, donc je me casse aussi"
-				);
-				queue.destroy(true);
+			DiscordPlayer.player = new Player(DiscordClient.getInstance(), {
+				leaveOnEmpty: true,
+				quality: "high"
 			});
-			DiscordPlayer.player.on("error", async (queue, error) => {
-				logger.error(error.message);
-				await (queue.metadata as { channel: TextChannel }).channel.send(
-					"❌ | Une erreur est survenue lors de la lecture de la playlist"
-				);
+			DiscordPlayer.channels = new Collection();
+
+			env.bot.musicChannels.forEach(channel => {
+				const textChannel = DiscordClient.getInstance().channels.cache.get(channel) as TextChannel;
+
+				DiscordPlayer.channels.set(channel, textChannel);
+			});
+
+			DiscordPlayer.player.on("songChanged", async (queue, song) => {
+				const channel = DiscordPlayer.channels.get(queue.guild.id);
+				await channel?.send(`🎶 | En cours de lecture **${song.name}** (${song.url}) !`);
+			});
+			DiscordPlayer.player.on("channelEmpty", async queue => {
+				const channel = DiscordPlayer.channels.get(queue.guild.id);
+
+				await channel?.send("😬 | Bon bah y'a plus personne... Je me casse aussi");
+				queue.leave();
+			});
+			DiscordPlayer.player.on("clientDisconnect", async queue => {
+				const channel = DiscordPlayer.channels.get(queue.guild.id);
+
+				await channel?.send("➡️🚪 | Allez, mon ami (Drake) et ses connaissances, j'me casse !");
+			});
+			DiscordPlayer.player.on("error", async (error, queue) => {
+				const channel = DiscordPlayer.channels.get(queue.guild.id);
+
+				logger.error(error);
+				await channel?.send("❌ | Une erreur est survenue lors de la lecture de la playlist");
 			});
 			DiscordPlayer.player.on("queueEnd", async () => {
 				await new Promise(resolve => setTimeout(resolve, 30000));

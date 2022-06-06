@@ -61,14 +61,10 @@ const checkCommand = async (interaction: CommandInteraction) => {
 		);
 	}
 
-	let queue = DiscordPlayer.getInstance().getQueue(channel?.guild as Guild);
+	let queue = DiscordPlayer.getInstance().getQueue((channel.guild as Guild).id);
 
 	if (!queue) {
-		queue = DiscordPlayer.getInstance().createQueue(channel?.guild as Guild, {
-			metadata: {
-				channel: interaction.channel
-			}
-		});
+		queue = DiscordPlayer.getInstance().createQueue((channel.guild as Guild).id);
 	}
 
 	return { queue, channel };

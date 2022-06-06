@@ -1,4 +1,5 @@
 import * as dotenv from "dotenv";
+import { HexColorString } from "discord.js";
 
 dotenv.config();
 
@@ -12,7 +13,7 @@ export const env = {
 		clientId: process.env.CLIENT_ID || "",
 		ownerId: process.env.OWNER_ID || "",
 		botName: process.env.BOT_NAME || "",
-		commandPrefix: process.env.COMMAND_PREFIX || "",
+		color: (process.env.BOT_COLOR || "#00ffff") as HexColorString,
 		guilds: (process.env.GUILDS || "").split(",").filter(guild => guild !== ""),
 		voiceLoggingChannel: process.env.VOICE_LOGGING_CHANNEL || "",
 		userUpdateLoggingChannel: process.env.USER_UPDATE_LOGGING_CHANNEL || "",

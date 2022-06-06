@@ -14,7 +14,7 @@ const pause: DiscordCommand = {
 
 		const { queue } = commandData;
 
-		if (!queue.playing) {
+		if (!queue.isPlaying) {
 			return;
 		}
 
