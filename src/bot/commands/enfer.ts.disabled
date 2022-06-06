@@ -53,7 +53,9 @@ const hell: DiscordCommand = {
 			await queue.play(demonFile, {
 				immediate: true,
 				requestedBy: (interaction.member as GuildMember).user,
-				data: {}
+				data: {
+					message: "Kill me please"
+				}
 			});
 		}
 	}
