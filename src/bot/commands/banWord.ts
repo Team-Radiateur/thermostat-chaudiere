@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Permissions } from "discord.js";
 
 import { BannedWord } from "../../databases/sqlite/bannedWord";
-import { macros } from "../../helpers/macros";
+import { replyToInteraction } from "../../helpers/macros";
 import { string } from "../../helpers/string";
 
 import { DiscordClient } from "../types/discordClient";
@@ -17,7 +17,7 @@ const banWord: DiscordCommand = {
 		) as SlashCommandBuilder,
 	execute: async interaction => {
 		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
-			return await macros.replyToInteraction(interaction, "Eh oh, tu t'es pris pour qui, Carolo ?");
+			return await replyToInteraction(interaction, "Eh oh, tu t'es pris pour qui, Carolo ?");
 		}
 
 		const toHandle = interaction.options.getString("mot");
@@ -45,7 +45,7 @@ const banWord: DiscordCommand = {
 			})();
 		}
 
-		return await macros.replyToInteraction(interaction, "Liste des mots interdits mise à jour");
+		return await replyToInteraction(interaction, "Liste des mots interdits mise à jour");
 	}
 };
 

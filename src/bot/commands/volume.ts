@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { macros } from "../../helpers/macros";
+import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 const volume: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -16,7 +16,7 @@ const volume: DiscordCommand = {
 				.setRequired(false)
 		) as SlashCommandBuilder,
 	execute: async interaction => {
-		const commandData = await macros.checkCommand(interaction);
+		const commandData = await prepareResponseToInteraction(interaction);
 
 		if (!commandData) {
 			return;
@@ -26,14 +26,14 @@ const volume: DiscordCommand = {
 		const newVolume = interaction.options.getInteger("nouveau");
 
 		if (!newVolume) {
-			return await macros.replyToInteraction(interaction, `🔊 | Volume actuel : ${queue.volume}%`);
+			return await replyToInteraction(interaction, `🔊 | Volume actuel : ${queue.volume}%`);
 		}
 
 		if (queue.setVolume(newVolume)) {
-			return await macros.replyToInteraction(interaction, `🔊 | Volume changé (nouveau volume: ${newVolume}`);
+			return await replyToInteraction(interaction, `🔊 | Volume changé (nouveau volume: ${newVolume}`);
 		}
 
-		return await macros.replyToInteraction(interaction, `❌ | Volume non changé (nouveau volume: ${queue.volume}`);
+		return await replyToInteraction(interaction, `❌ | Volume non changé (nouveau volume: ${queue.volume}`);
 	}
 };
 

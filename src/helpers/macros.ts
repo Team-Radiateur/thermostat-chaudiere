@@ -1,9 +1,9 @@
-import { CommandInteraction, Guild, GuildMember, Permissions } from "discord.js";
+import { CommandInteraction, Guild, GuildMember, MessageEmbed, Permissions, User } from "discord.js";
 import { setTimeout } from "timers/promises";
 import { env } from "../../config/env";
-import { DiscordPlayer } from "../bot/types/discordClient";
+import { DiscordClient, DiscordPlayer } from "../bot/types/discordClient";
 
-const notImplemented = () => {
+export const notImplemented = () => {
 	const error = Object.assign(new Error("Not implemented"), {
 		code: "ERR_UNIMPLEMENTED"
 	});
@@ -13,7 +13,7 @@ const notImplemented = () => {
 	throw error;
 };
 
-const todo = () => {
+export const todo = () => {
 	const error = Object.assign(new Error("Not yet implemented"), {
 		code: "ERR_TODO"
 	});
@@ -23,19 +23,38 @@ const todo = () => {
 	throw error;
 };
 
-const replyToInteraction = async (
+export const replyToInteraction = async (
 	interaction: CommandInteraction,
-	message: string,
+	message: string | MessageEmbed,
 	ephemeral = true
 ): Promise<void> => {
-	await interaction.reply({ content: message, ephemeral: ephemeral });
+	if (typeof message === "string") {
+		await interaction.reply({ content: message, ephemeral: ephemeral });
+	} else {
+		await interaction.reply({ embeds: [message], ephemeral: ephemeral });
+	}
+
 	if (!ephemeral) {
 		await setTimeout(5000);
 		await interaction.deleteReply();
 	}
 };
 
-const checkCommand = async (interaction: CommandInteraction) => {
+export const prepareEmbed = (user: User): MessageEmbed => {
+	return new MessageEmbed()
+		.setAuthor({
+			name: user.username,
+			iconURL: user.displayAvatarURL()
+		})
+		.setColor(env.bot.color)
+		.setTimestamp()
+		.setFooter({
+			text: "Thermostat",
+			iconURL: (DiscordClient.getInstance().user as User).displayAvatarURL()
+		});
+};
+
+export const prepareResponseToInteraction = async (interaction: CommandInteraction) => {
 	if (
 		!env.bot.musicChannels.find(channel => channel === interaction.channel?.id) &&
 		!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])
@@ -67,12 +86,9 @@ const checkCommand = async (interaction: CommandInteraction) => {
 		queue = DiscordPlayer.getInstance().createQueue((channel.guild as Guild).id);
 	}
 
-	return { queue, channel };
-};
-
-export const macros = {
-	notImplemented,
-	todo,
-	replyToInteraction,
-	checkCommand
+	return {
+		queue,
+		channel,
+		embed: prepareEmbed(interaction.user)
+	};
 };

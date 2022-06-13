@@ -1,9 +1,10 @@
-import { MessageEmbed, User } from "discord.js";
+import { User } from "discord.js";
 import { bold, hyperlink } from "@discordjs/builders";
 
 import { DiscordEvent } from "../types/discordEvents";
 import { DiscordClient } from "../types/discordClient";
 import { env } from "../../../config/env";
+import { prepareEmbed } from "../../helpers/macros";
 
 const userUpdate: DiscordEvent = {
 	name: "userUpdate",
@@ -13,14 +14,11 @@ const userUpdate: DiscordEvent = {
 
 		const loggingChannel = DiscordClient.getInstance().channels.cache.get(env.bot.userUpdateLoggingChannel);
 		if (!loggingChannel || !loggingChannel.isText()) return;
-		let embed = new MessageEmbed()
+		let embed = prepareEmbed(oldUser)
 			.setTitle(bold(`${oldUser.tag} a mis à jour son profil !`))
-			.setColor(env.bot.color)
-			.setAuthor({ name: oldUser.tag, iconURL: oldUser.displayAvatarURL() })
-			.setFooter({ text: `ID de l'utilisateur: ${newUser.id} • ${new Date().toLocaleString()}` });
+			.setFooter({ text: `ID de l'utilisateur: ${newUser.id}` });
 
 		if (oldUser.displayAvatarURL() !== newUser.displayAvatarURL()) {
-			// eslint-disable-next-line max-len
 			embed = embed.addField(
 				"Avatar",
 				`${hyperlink("[précédent]", oldUser.displayAvatarURL())} => ${hyperlink(

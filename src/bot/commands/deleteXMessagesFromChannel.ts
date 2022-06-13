@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { CommandInteraction, Permissions, TextChannel } from "discord.js";
-import { macros } from "../../helpers/macros";
 import { DiscordCommand } from "../types/discordEvents";
+import { replyToInteraction } from "../../helpers/macros";
 
 const purgeMessages: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -17,13 +17,13 @@ const purgeMessages: DiscordCommand = {
 		) as SlashCommandBuilder,
 	execute: async (interaction: CommandInteraction) => {
 		if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
-			return await macros.replyToInteraction(interaction, "Eh, oh ! Tu t'es pris pour qui là, Marseillais ?");
+			return await replyToInteraction(interaction, "Eh, oh ! Tu t'es pris pour qui là, Marseillais ?");
 		}
 
 		const { channel } = interaction;
 
 		if (!(channel instanceof TextChannel)) {
-			return await macros.replyToInteraction(
+			return await replyToInteraction(
 				interaction,
 				"Faut envoyer le message dans un salon textuel de la guilde, débile !"
 			);
@@ -33,7 +33,7 @@ const purgeMessages: DiscordCommand = {
 
 		await channel.bulkDelete(numberToDelete as number, true);
 
-		return await macros.replyToInteraction(interaction, `Les ${numberToDelete} message(s) ont été supprimés chef`);
+		return await replyToInteraction(interaction, `Les ${numberToDelete} message(s) ont été supprimés chef`);
 	}
 };
 

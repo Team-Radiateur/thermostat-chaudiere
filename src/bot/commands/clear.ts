@@ -2,14 +2,14 @@ import { Permissions } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { macros } from "../../helpers/macros";
+import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 const clearList: boolean[] = [];
 
 const clear: DiscordCommand = {
 	data: new SlashCommandBuilder().setName("clear").setDescription("Vide la playlist entièrement"),
 	execute: async interaction => {
-		const commandData = await macros.checkCommand(interaction);
+		const commandData = await prepareResponseToInteraction(interaction);
 
 		if (!commandData) {
 			return;
@@ -24,14 +24,11 @@ const clear: DiscordCommand = {
 			if (queue.skip()) {
 				clearList.length = 0;
 
-				return await macros.replyToInteraction(interaction, "👌 | Musique passée");
+				return await replyToInteraction(interaction, "👌 | Musique passée");
 			}
 		}
 
-		return await macros.replyToInteraction(
-			interaction,
-			`👀 | ${people - clearList.length} personnes doivent encore`
-		);
+		return await replyToInteraction(interaction, `👀 | ${people - clearList.length} personnes doivent encore`);
 	}
 };
 

@@ -1,7 +1,7 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { hyperlink, SlashCommandBuilder } from "@discordjs/builders";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { macros } from "../../helpers/macros";
+import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 const play: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -11,64 +11,70 @@ const play: DiscordCommand = {
 			option.setName("musique").setDescription("La musique à jouer").setRequired(false)
 		) as SlashCommandBuilder,
 	execute: async interaction => {
-		const commandData = await macros.checkCommand(interaction);
+		const commandData = await prepareResponseToInteraction(interaction);
 
 		if (!commandData) {
 			return;
 		}
 
-		const { queue, channel } = commandData;
-
+		const { queue, channel, embed } = commandData;
 		const uri = interaction.options.getString("musique");
+
+		embed.setTitle("Playlist");
 
 		if (!uri) {
 			if (!queue.songs.length) {
-				return await macros.replyToInteraction(
-					interaction,
-					"❌ | Il n'y a aucune musique à lire dans la playlist."
-				);
+				embed.setDescription("❌ | Il n'y a aucune musique à lire dans la playlist.");
+
+				return await replyToInteraction(interaction, embed);
 			}
 
 			if (!queue.isPlaying) {
-				return await macros.replyToInteraction(
-					interaction,
-					"❌ | Aucune musique n'est en cours de lecture actuellement."
-				);
+				embed.setDescription("❌ | Aucune musique n'est en cours de lecture actuellement.");
+
+				return await replyToInteraction(interaction, embed);
 			}
 
 			queue.setPaused(false);
-			return await macros.replyToInteraction(interaction, "▶️ | Reprise de la lecture...");
+			embed.setDescription("▶️ | Reprise de la lecture...");
+			return await replyToInteraction(interaction, embed);
 		} else {
 			try {
 				await queue.join(channel);
 			} catch (error) {
-				return await macros.replyToInteraction(interaction, "😬 | Je n'ai pas su me connecter au canal", true);
+				console.log(error);
+				embed.setDescription("😬 | Impossible de rejoindre le salon.");
+				return await replyToInteraction(interaction, embed, true);
 			}
 
 			await interaction.deferReply();
 
-			const song = await queue.play(uri);
-			if (!song) {
-				return await interaction.followUp({
+			let song;
+			try {
+				song = await queue.play(uri);
+			} catch (error) {
+				return await interaction.reply({
 					content: `❌ | Le morceau **${uri}** n'a pas été trouvé !`
 				});
 			}
 
-			let response = `👌 | Morceau **${song.name}** ajouté à la liste de lecture`;
+			embed.setTitle(song.name);
+			const response = `Ajouté à la liste de lecture`;
 
 			if (queue.songs.length - 1 > 0) {
-				response += "\nListe des prochaines musiques :\n";
-
 				queue.songs.forEach((song, index) => {
 					if (index !== 0 && !song.name.includes("renarde.m4a")) {
-						response += `${index}. ${song.name} (${song.url})\n`;
+						embed.addField(
+							`${hyperlink(String(index), song.url)}. ${song.name} (${song.duration})`,
+							hyperlink("lien", song.url)
+						);
 					}
 				});
 			}
 
-			return await interaction.followUp({
-				content: response
-			});
+			embed.setDescription(response);
+			embed.setThumbnail(song.thumbnail);
+			return await interaction.followUp({ embeds: [embed], ephemeral: true });
 		}
 	}
 };

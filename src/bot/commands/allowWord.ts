@@ -5,7 +5,7 @@ import { DiscordCommand } from "../types/discordEvents";
 import { DiscordClient } from "../types/discordClient";
 
 import { BannedWord } from "../../databases/sqlite/bannedWord";
-import { macros } from "../../helpers/macros";
+import { replyToInteraction } from "../../helpers/macros";
 import { string } from "../../helpers/string";
 
 const allowWord: DiscordCommand = {
@@ -17,7 +17,7 @@ const allowWord: DiscordCommand = {
 		) as SlashCommandBuilder,
 	execute: async interaction => {
 		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR]))
-			return await macros.replyToInteraction(
+			return await replyToInteraction(
 				interaction,
 				"Tout doux, bijou... T'as cru que t'avais le droit de faire ça ?",
 				true
@@ -41,7 +41,7 @@ const allowWord: DiscordCommand = {
 				});
 			})();
 
-			await macros.replyToInteraction(interaction, "Mot correctement mis à jour");
+			await replyToInteraction(interaction, "Mot correctement mis à jour");
 		}
 	}
 };

@@ -35,7 +35,7 @@ const getColorCodeByName = (name: colorName): string => {
 
 function readableNow() {
 	const now = new Date(Date.now());
-	return `${now.toISOString()}`;
+	return `${now.toLocaleString()}`;
 }
 
 function loggerDebug(text: string, ...args: unknown[]): void {

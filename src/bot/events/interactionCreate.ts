@@ -1,10 +1,10 @@
 import { Interaction } from "discord.js";
 
 import { logger } from "../../helpers/logger";
-import { macros } from "../../helpers/macros";
 
 import { DiscordClient } from "../types/discordClient";
 import { DiscordEvent } from "../types/discordEvents";
+import { replyToInteraction } from "../../helpers/macros";
 
 const interactionCreate: DiscordEvent = {
 	name: "interactionCreate",
@@ -30,10 +30,7 @@ const interactionCreate: DiscordEvent = {
 		} catch (error) {
 			logger.error((error as Error).stack as string);
 			if (!(await interaction.fetchReply())) {
-				await macros.replyToInteraction(
-					interaction,
-					"Une erreur est survenue lors de l'exécution de la commande."
-				);
+				await replyToInteraction(interaction, "Une erreur est survenue lors de l'exécution de la commande.");
 			}
 		}
 	}
