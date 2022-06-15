@@ -34,8 +34,7 @@ const getColorCodeByName = (name: colorName): string => {
 };
 
 function readableNow() {
-	const now = new Date(Date.now());
-	return `${now.toLocaleString()}`;
+	return `${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}`;
 }
 
 function loggerDebug(text: string, ...args: unknown[]): void {
