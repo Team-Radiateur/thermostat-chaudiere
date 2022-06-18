@@ -3,16 +3,18 @@ import { logger } from "./logger";
 import { DiscordClient } from "../bot/types/discordClient";
 import { BannedWord } from "../databases/sqlite/bannedWord";
 import { string } from "./string";
+import { prepareEmbed } from "./macros";
 
 export const filter = async (message: Message) => {
+	logger.info(`${message.author.username}#${message.author.discriminator} a écrit "${message}"`);
+
 	if (
 		message.author.bot ||
 		message.member?.permissions?.has(Permissions.FLAGS.ADMINISTRATOR) ||
 		message.member?.permissions?.has(Permissions.FLAGS.MANAGE_ROLES)
-	)
+	) {
 		return;
-
-	logger.info(`${message.author.username}#${message.author.discriminator} a écrit "${message}"`);
+	}
 
 	if (
 		(DiscordClient.database.prepare("select * from main.banned_words;").all() as BannedWord[]).filter(
@@ -20,10 +22,13 @@ export const filter = async (message: Message) => {
 				wordData.enabled && string.normalized(message.content).includes(string.normalized(wordData.word))
 		).length
 	) {
-		// eslint-disable-next-line max-len
-		const reply = await message.reply(
-			`Oulàlà... la Chaudière n'aime pas que tu envoies une telle chose dans le circuit du Radiateur...`
-		);
+		const reply = await message.reply({
+			embeds: [
+				prepareEmbed(message.author)
+					.setTitle("Valve thermostatique textuelle")
+					.setDescription("Oulàlà... tu ne peux pas envoyer une telle chose dans le circuit du Radiateur...")
+			]
+		});
 		await message.delete();
 
 		setTimeout(async () => {

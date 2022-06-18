@@ -16,7 +16,7 @@ const showPlaylist: DiscordCommand = {
 
 		const { queue, embed } = commandData;
 		embed
-			.setTitle("Playlist")
+			.setTitle("Valve thermostatique musicale")
 			.setDescription(
 				queue.songs.length
 					? "Voici la liste des musiques qu'il reste à lire :"

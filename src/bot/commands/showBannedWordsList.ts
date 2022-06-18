@@ -17,7 +17,7 @@ const showBannedWordsList: DiscordCommand = {
 		await replyToInteraction(
 			interaction,
 			prepareEmbed(interaction.user)
-				.setTitle("Liste des mots bannis")
+				.setTitle("Valve thermostatique textuelle")
 				.setDescription(
 					words.length ? "Voici la liste des mots interdits :" : "Il n'y a pas de mots dans la liste"
 				)

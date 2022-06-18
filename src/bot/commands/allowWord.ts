@@ -5,7 +5,7 @@ import { DiscordCommand } from "../types/discordEvents";
 import { DiscordClient } from "../types/discordClient";
 
 import { BannedWord } from "../../databases/sqlite/bannedWord";
-import { replyToInteraction } from "../../helpers/macros";
+import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 import { string } from "../../helpers/string";
 
 const allowWord: DiscordCommand = {
@@ -16,10 +16,12 @@ const allowWord: DiscordCommand = {
 			option.setName("mot").setDescription("Le mot à permettre").setRequired(true)
 		) as SlashCommandBuilder,
 	execute: async interaction => {
+		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique textuelle");
+
 		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR]))
 			return await replyToInteraction(
 				interaction,
-				"Tout doux, bijou... T'as cru que t'avais le droit de faire ça ?",
+				embed.setDescription("🚫 | Tout doux, bijou... T'as cru que t'avais le droit de faire ça ?"),
 				true
 			);
 
@@ -41,7 +43,7 @@ const allowWord: DiscordCommand = {
 				});
 			})();
 
-			await replyToInteraction(interaction, "Mot correctement mis à jour");
+			await replyToInteraction(interaction, embed.setDescription("✅ | Mot correctement mis à jour !"));
 		}
 	}
 };

@@ -4,7 +4,7 @@ import { logger } from "../../helpers/logger";
 
 import { DiscordClient } from "../types/discordClient";
 import { DiscordEvent } from "../types/discordEvents";
-import { replyToInteraction } from "../../helpers/macros";
+import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 
 const interactionCreate: DiscordEvent = {
 	name: "interactionCreate",
@@ -30,7 +30,12 @@ const interactionCreate: DiscordEvent = {
 		} catch (error) {
 			logger.error((error as Error).stack as string);
 			if (!(await interaction.fetchReply())) {
-				await replyToInteraction(interaction, "Une erreur est survenue lors de l'exécution de la commande.");
+				const embed = prepareEmbed(interaction.user);
+
+				embed.setTitle("Valve thermostatique générale");
+				embed.setDescription("Désolé, une erreur est survenue lors de l'exécution de la commande.");
+
+				await replyToInteraction(interaction, embed);
 			}
 		}
 	}

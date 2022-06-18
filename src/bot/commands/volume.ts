@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
+import { prepareEmbed, prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 const volume: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -24,16 +24,26 @@ const volume: DiscordCommand = {
 
 		const { queue } = commandData;
 		const newVolume = interaction.options.getInteger("nouveau");
+		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique musicale");
 
 		if (!newVolume) {
-			return await replyToInteraction(interaction, `🔊 | Volume actuel : ${queue.volume}%`);
+			return await replyToInteraction(
+				interaction,
+				embed.setDescription(`🔉 | Le volume actuel est de ${queue.volume}%`)
+			);
 		}
 
 		if (queue.setVolume(newVolume)) {
-			return await replyToInteraction(interaction, `🔊 | Volume changé (nouveau volume: ${newVolume}`);
+			return await replyToInteraction(
+				interaction,
+				embed.setDescription(`🔉 | Le volume a été mis à ${newVolume}%`)
+			);
 		}
 
-		return await replyToInteraction(interaction, `❌ | Volume non changé (nouveau volume: ${queue.volume}`);
+		return await replyToInteraction(
+			interaction,
+			embed.setDescription(`❌ | Volume non changé (volume souhaité : ${queue.volume}`)
+		);
 	}
 };
 

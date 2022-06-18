@@ -22,7 +22,6 @@ const skip: DiscordCommand = {
 		const people = Math.floor((channel.members.size / 100) * 51);
 
 		skipList.push(true);
-		embed.setTitle("Passer la musique");
 
 		if (skipList.length === people || interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
 			while (!queue.skip()) {
@@ -31,7 +30,7 @@ const skip: DiscordCommand = {
 
 			skipList.length = 0;
 
-			return await replyToInteraction(interaction, "👌 | Musique passée", false);
+			return await replyToInteraction(interaction, embed.setDescription("👌 | Musique passée"), false);
 		}
 
 		let response = `⏳ | ${people - skipList.length} personnes doivent encore voter pour passer cette musique.\n`;
@@ -46,9 +45,7 @@ const skip: DiscordCommand = {
 
 		response += ` ${100 - people}% restants`;
 
-		embed.setDescription(response);
-
-		return await replyToInteraction(interaction, embed);
+		return await replyToInteraction(interaction, embed.setDescription(response));
 	}
 };
 

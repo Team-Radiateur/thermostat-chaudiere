@@ -20,31 +20,34 @@ const play: DiscordCommand = {
 		const { queue, channel, embed } = commandData;
 		const uri = interaction.options.getString("musique");
 
-		embed.setTitle("Playlist");
-
 		if (!uri) {
 			if (!queue.songs.length) {
-				embed.setDescription("❌ | Il n'y a aucune musique à lire dans la playlist.");
-
-				return await replyToInteraction(interaction, embed);
+				return await replyToInteraction(
+					interaction,
+					embed.setDescription("❌ | Il n'y a aucune musique à lire dans la playlist.")
+				);
 			}
 
 			if (!queue.isPlaying) {
-				embed.setDescription("❌ | Aucune musique n'est en cours de lecture actuellement.");
-
-				return await replyToInteraction(interaction, embed);
+				return await replyToInteraction(
+					interaction,
+					embed.setDescription("❌ | Aucune musique n'est en cours de lecture actuellement.")
+				);
 			}
 
 			queue.setPaused(false);
-			embed.setDescription("▶️ | Reprise de la lecture...");
-			return await replyToInteraction(interaction, embed);
+			return await replyToInteraction(interaction, embed.setDescription("▶️ | Reprise de la lecture..."));
 		} else {
 			try {
 				await queue.join(channel);
 			} catch (error) {
 				console.log(error);
-				embed.setDescription("😬 | Impossible de rejoindre le salon.");
-				return await replyToInteraction(interaction, embed, true);
+
+				return await replyToInteraction(
+					interaction,
+					embed.setDescription("😬 | Impossible de rejoindre le salon."),
+					true
+				);
 			}
 
 			await interaction.deferReply();
@@ -58,7 +61,7 @@ const play: DiscordCommand = {
 				});
 			}
 
-			embed.setTitle(song.name);
+			embed.setTitle("Valve thermostatique musicale");
 			const response = `Ajouté à la liste de lecture`;
 
 			if (queue.songs.length - 1 > 0) {

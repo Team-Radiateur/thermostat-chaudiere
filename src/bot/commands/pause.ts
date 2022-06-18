@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
+import { prepareEmbed, prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 const pause: DiscordCommand = {
 	data: new SlashCommandBuilder().setName("pause").setDescription("Met la lecture en pause"),
@@ -12,10 +12,14 @@ const pause: DiscordCommand = {
 			return;
 		}
 
+		const embed = prepareEmbed(interaction.user);
+
 		const { queue } = commandData;
 
 		if (!queue.isPlaying) {
-			return;
+			embed.setTitle("Valve thermostatique musicale").setDescription("❌ | Pas de musique en cours de lecture");
+
+			return await replyToInteraction(interaction, embed, true);
 		}
 
 		queue.setPaused(true);

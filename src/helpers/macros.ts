@@ -61,7 +61,9 @@ export const prepareResponseToInteraction = async (interaction: CommandInteracti
 	) {
 		return await replyToInteraction(
 			interaction,
-			"❌ | Vous devez envoyer cette commande dans un canal dédié !",
+			prepareEmbed(interaction.user)
+				.setTitle("Valve thermostatique administrative")
+				.setDescription("Tu t'es pris pour qui là ?"),
 			true
 		);
 	}
@@ -75,20 +77,20 @@ export const prepareResponseToInteraction = async (interaction: CommandInteracti
 	if (!channel) {
 		return await replyToInteraction(
 			interaction,
-			"❌ | Vous devez être connecté à un salon vocal pour faire cela !",
+			prepareEmbed(interaction.user)
+				.setTitle("Valve thermostatique musicale")
+				.setDescription("Vous devez être connecté à un salon vocal pour faire cela !"),
 			false
 		);
 	}
 
-	let queue = DiscordPlayer.getInstance().getQueue((channel.guild as Guild).id);
-
-	if (!queue) {
-		queue = DiscordPlayer.getInstance().createQueue((channel.guild as Guild).id);
-	}
+	const queue =
+		DiscordPlayer.getInstance().getQueue((channel.guild as Guild).id) ||
+		DiscordPlayer.getInstance().createQueue((channel.guild as Guild).id);
 
 	return {
 		queue,
 		channel,
-		embed: prepareEmbed(interaction.user)
+		embed: prepareEmbed(interaction.user).setTitle("Valve thermostatique musicale")
 	};
 };

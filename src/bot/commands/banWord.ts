@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Permissions } from "discord.js";
 
 import { BannedWord } from "../../databases/sqlite/bannedWord";
-import { replyToInteraction } from "../../helpers/macros";
+import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 import { string } from "../../helpers/string";
 
 import { DiscordClient } from "../types/discordClient";
@@ -16,8 +16,13 @@ const banWord: DiscordCommand = {
 			option.setName("mot").setDescription("Le mot à bannir").setRequired(true)
 		) as SlashCommandBuilder,
 	execute: async interaction => {
+		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique textuelle");
+
 		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
-			return await replyToInteraction(interaction, "Eh oh, tu t'es pris pour qui, Carolo ?");
+			return await replyToInteraction(
+				interaction,
+				embed.setDescription("🚫 | Eh oh, tu t'es pris pour qui, Carolo ? Revois tes droits avant de faire ça.")
+			);
 		}
 
 		const toHandle = interaction.options.getString("mot");
@@ -28,8 +33,12 @@ const banWord: DiscordCommand = {
 			if (words[0].enabled) return;
 
 			const updateStatement = DiscordClient.database.prepare(
-				// eslint-disable-next-line max-len
-				"update banned_words set enabled = (@enabled), update_date = datetime('now', 'localtime') where id = (@id);"
+				`
+                    update banned_words
+                    set enabled     = (@enabled),
+                        update_date = datetime('now', 'localtime')
+                    where id = (@id);
+				`
 			);
 
 			DiscordClient.database.transaction(() => {
@@ -45,7 +54,7 @@ const banWord: DiscordCommand = {
 			})();
 		}
 
-		return await replyToInteraction(interaction, "Liste des mots interdits mise à jour");
+		return await replyToInteraction(interaction, embed.setDescription("📄 | Liste des mots interdits mise à jour"));
 	}
 };
 

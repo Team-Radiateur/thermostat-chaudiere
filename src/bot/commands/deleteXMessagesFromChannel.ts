@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { CommandInteraction, Permissions, TextChannel } from "discord.js";
 import { DiscordCommand } from "../types/discordEvents";
-import { replyToInteraction } from "../../helpers/macros";
+import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 
 const purgeMessages: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -16,24 +16,35 @@ const purgeMessages: DiscordCommand = {
 				.setRequired(true)
 		) as SlashCommandBuilder,
 	execute: async (interaction: CommandInteraction) => {
+		const embed = prepareEmbed(interaction.user);
+
 		if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
-			return await replyToInteraction(interaction, "Eh, oh ! Tu t'es pris pour qui là, Marseillais ?");
+			embed
+				.setTitle("Valve thermostatique textuelle")
+				.setDescription("Eh, oh ! Tu t'es pris pour qui là, Marseillais ?");
+
+			return await replyToInteraction(interaction, embed);
 		}
 
 		const { channel } = interaction;
 
 		if (!(channel instanceof TextChannel)) {
-			return await replyToInteraction(
-				interaction,
-				"Faut envoyer le message dans un salon textuel de la guilde, débile !"
-			);
+			embed
+				.setTitle("Valve thermostatique générale")
+				.setDescription("Faut envoyer le message dans un salon textuel de la guilde, débile !");
+
+			return await replyToInteraction(interaction, embed);
 		}
 
 		const numberToDelete = interaction.options.getInteger("nombre");
 
 		await channel.bulkDelete(numberToDelete as number, true);
 
-		return await replyToInteraction(interaction, `Les ${numberToDelete} message(s) ont été supprimés chef`);
+		embed
+			.setTitle("Valve thermostatique textuelle")
+			.setDescription(`Les ${numberToDelete} message(s) ont été supprimés, chef`);
+
+		return await replyToInteraction(interaction, embed);
 	}
 };
 

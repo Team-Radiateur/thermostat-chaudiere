@@ -14,12 +14,13 @@ const userUpdate: DiscordEvent = {
 
 		const loggingChannel = DiscordClient.getInstance().channels.cache.get(env.bot.userUpdateLoggingChannel);
 		if (!loggingChannel || !loggingChannel.isText()) return;
-		let embed = prepareEmbed(oldUser)
-			.setTitle(bold(`${oldUser.tag} a mis à jour son profil !`))
+		const embed = prepareEmbed(oldUser)
+			.setTitle("Valve thermostatique événementielle")
+			.setDescription(bold(`${oldUser.tag} a mis à jour son profil !`))
 			.setFooter({ text: `ID de l'utilisateur: ${newUser.id}` });
 
 		if (oldUser.displayAvatarURL() !== newUser.displayAvatarURL()) {
-			embed = embed.addField(
+			embed.addField(
 				"Avatar",
 				`${hyperlink("[précédent]", oldUser.displayAvatarURL())} => ${hyperlink(
 					"[nouveau]",
@@ -27,11 +28,11 @@ const userUpdate: DiscordEvent = {
 				)}`
 			);
 		} else if (oldUser.username !== newUser.username) {
-			embed = embed.addField("Nouveau pseudo", `${oldUser.username} => ${newUser.username}`);
+			embed.addField("Nouveau pseudo", `${oldUser.username} => ${newUser.username}`);
 		} else if (oldUser.discriminator !== newUser.discriminator) {
-			embed = embed.addField("Nouveau discriminant", `${oldUser.discriminator} => ${newUser.discriminator}`);
+			embed.addField("Nouveau discriminant", `${oldUser.discriminator} => ${newUser.discriminator}`);
 		} else if (oldUser.tag !== newUser.tag) {
-			embed = embed.addField("Nouveau tag", newUser.tag);
+			embed.addField("Nouveau tag", newUser.tag);
 		} else {
 			return;
 		}

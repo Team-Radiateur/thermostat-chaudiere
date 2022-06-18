@@ -10,7 +10,7 @@ const ready: DiscordEvent = {
 
 		setInterval(() => {
 			const temperature = Math.floor(Math.random() * 70 + 21);
-			DiscordClient.getInstance().user?.setActivity(`Température : ${temperature}°C`);
+			DiscordClient.getInstance().user?.setActivity(`🌡 | Température : ${temperature}°C`);
 		}, 5000);
 	}
 };
