@@ -6,7 +6,9 @@ import { string } from "./string";
 import { prepareEmbed } from "./macros";
 
 export const filter = async (message: Message) => {
-	logger.info(`${message.author.username}#${message.author.discriminator} a écrit "${message}"`);
+	if (!message.author.bot) {
+		logger.info(`${message.author.username}#${message.author.discriminator} a écrit "${message}"`);
+	}
 
 	if (
 		message.author.bot ||
