@@ -62,21 +62,21 @@ const play: DiscordCommand = {
 			}
 
 			embed.setTitle("Valve thermostatique musicale");
-			const response = `Ajouté à la liste de lecture`;
+			embed.setDescription(`${song.name} ajouté à la liste de lecture.\n Playlist :`);
+			embed.setThumbnail(song.thumbnail);
 
 			if (queue.songs.length - 1 > 0) {
 				queue.songs.forEach((song, index) => {
 					if (index !== 0 && !song.name.includes("renarde.m4a")) {
 						embed.addField(
 							`${hyperlink(String(index), song.url)}. ${song.name} (${song.duration})`,
-							hyperlink("lien", song.url)
+							hyperlink("lien", song.url),
+							false
 						);
 					}
 				});
 			}
 
-			embed.setDescription(response);
-			embed.setThumbnail(song.thumbnail);
 			return await interaction.followUp({ embeds: [embed], ephemeral: true });
 		}
 	}
