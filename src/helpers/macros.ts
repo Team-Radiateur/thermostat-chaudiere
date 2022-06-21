@@ -34,7 +34,7 @@ export const replyToInteraction = async (
 		await interaction.reply({ embeds: [message], ephemeral: ephemeral });
 	}
 
-	if (!ephemeral) {
+	if (ephemeral) {
 		await setTimeout(5000);
 		await interaction.deleteReply();
 	}
