@@ -26,7 +26,8 @@ export const todo = () => {
 export const replyToInteraction = async (
 	interaction: CommandInteraction,
 	message: string | MessageEmbed,
-	ephemeral = true
+	ephemeral = true,
+	deleteAfter5s = false
 ): Promise<void> => {
 	if (typeof message === "string") {
 		await interaction.reply({ content: message, ephemeral: ephemeral });
@@ -34,7 +35,7 @@ export const replyToInteraction = async (
 		await interaction.reply({ embeds: [message], ephemeral: ephemeral });
 	}
 
-	if (ephemeral) {
+	if (!ephemeral && deleteAfter5s) {
 		await setTimeout(5000);
 		await interaction.deleteReply();
 	}
