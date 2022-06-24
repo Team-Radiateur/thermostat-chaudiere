@@ -49,7 +49,7 @@ const purgeMessages: DiscordCommand = {
 		// prettier-ignore
 		await channel.bulkDelete(
 			user
-				? (await channel.awaitMessages())
+				? (await channel.messages.fetch())
 					.filter(item => item.member === user)
 					.toJSON()
 					.filter((_, index) => (numberToDelete !== null ? index < numberToDelete : true))
