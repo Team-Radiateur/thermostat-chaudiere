@@ -1,10 +1,10 @@
 import Database from "better-sqlite3";
-import { Client, Collection, Intents, Snowflake, TextChannel } from "discord.js";
 import { Player } from "discord-music-player";
+import { Client, Collection, Intents, Snowflake, TextChannel } from "discord.js";
+import { env } from "../../../config/env";
+import { logger } from "../../helpers/logger";
 
 import { DiscordCommand } from "./discordEvents";
-import { logger } from "../../helpers/logger";
-import { env } from "../../../config/env";
 
 export class DiscordClient {
 	public static database: Database.Database;
@@ -39,7 +39,7 @@ export class DiscordClient {
 				]
 			});
 
-			DiscordClient.database = new Database(`${__dirname}/../../../../data/bot.sqlite`);
+			DiscordClient.database = new Database(`${__dirname}/../../../../resources/databases/bot.sqlite`);
 			DiscordClient.commands = new Collection();
 		}
 
