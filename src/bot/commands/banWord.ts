@@ -21,7 +21,9 @@ const banWord: DiscordCommand = {
 		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
 			return await replyToInteraction(
 				interaction,
-				embed.setDescription("🚫 | Eh oh, tu t'es pris pour qui, Carolo ? Revois tes droits avant de faire ça.")
+				embed
+					.setTitle("Valve thermostatique générale")
+					.setDescription("🚫 | Eh oh, tu t'es pris pour qui, Carolo ? Revois tes droits avant de faire ça.")
 			);
 		}
 

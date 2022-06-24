@@ -2,15 +2,22 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { EmbedFieldData, Permissions } from "discord.js";
 
 import { BannedWord } from "../../databases/sqlite/bannedWord";
+import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
+import { DiscordClient } from "../types/discordClient";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { DiscordClient } from "../types/discordClient";
-import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 
 const showBannedWordsList: DiscordCommand = {
 	data: new SlashCommandBuilder().setName("liste_mots").setDescription("Affiche la liste des mots bannis"),
 	execute: async interaction => {
-		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) return;
+		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
+			return await replyToInteraction(
+				interaction,
+				prepareEmbed(interaction.user)
+					.setTitle("Valve thermostatique générale")
+					.setDescription("🚫 | Eh oh, tu t'es pris pour qui, Carolo ? Revois tes droits avant de faire ça.")
+			);
+		}
 
 		const words = DiscordClient.database.prepare("select * from banned_words;").all() as BannedWord[];
 

@@ -1,12 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Permissions } from "discord.js";
 
-import { DiscordCommand } from "../types/discordEvents";
-import { DiscordClient } from "../types/discordClient";
-
 import { BannedWord } from "../../databases/sqlite/bannedWord";
 import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 import { string } from "../../helpers/string";
+import { DiscordClient } from "../types/discordClient";
+
+import { DiscordCommand } from "../types/discordEvents";
 
 const allowWord: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -21,7 +21,9 @@ const allowWord: DiscordCommand = {
 		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR]))
 			return await replyToInteraction(
 				interaction,
-				embed.setDescription("🚫 | Tout doux, bijou... T'as cru que t'avais le droit de faire ça ?"),
+				embed
+					.setTitle("Valve thermostatique générale")
+					.setDescription("🚫 | Tout doux, bijou... T'as cru que t'avais le droit de faire ça ?"),
 				true
 			);
 

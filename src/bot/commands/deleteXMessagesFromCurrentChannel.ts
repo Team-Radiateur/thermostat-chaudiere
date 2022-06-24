@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 import { CommandInteraction, Permissions, TextChannel } from "discord.js";
-import { DiscordCommand } from "../types/discordEvents";
 import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
+import { DiscordCommand } from "../types/discordEvents";
 
 const purgeMessages: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -13,14 +13,20 @@ const purgeMessages: DiscordCommand = {
 				.setName("nombre")
 				.setDescription("Le nombre de messages à supprimer")
 				.setMinValue(1)
-				.setRequired(true)
+				.setRequired(false)
+		)
+		.addMentionableOption(option =>
+			option
+				.setName("personne")
+				.setDescription("La personne dont il faut supprimer les messages")
+				.setRequired(false)
 		) as SlashCommandBuilder,
 	execute: async (interaction: CommandInteraction) => {
 		const embed = prepareEmbed(interaction.user);
 
 		if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
 			embed
-				.setTitle("Valve thermostatique textuelle")
+				.setTitle("Valve thermostatique générale")
 				.setDescription("Eh, oh ! Tu t'es pris pour qui là, Marseillais ?");
 
 			return await replyToInteraction(interaction, embed);
@@ -29,22 +35,34 @@ const purgeMessages: DiscordCommand = {
 		const { channel } = interaction;
 
 		if (!(channel instanceof TextChannel)) {
-			embed
-				.setTitle("Valve thermostatique générale")
-				.setDescription("Faut envoyer le message dans un salon textuel de la guilde, débile !");
-
-			return await replyToInteraction(interaction, embed);
+			return await replyToInteraction(
+				interaction,
+				embed
+					.setTitle("Valve thermostatique générale")
+					.setDescription("Faut envoyer le message dans un salon textuel de la guilde, débile !")
+			);
 		}
 
 		const numberToDelete = interaction.options.getInteger("nombre");
+		const user = interaction.options.getMentionable("personne");
 
-		await channel.bulkDelete(numberToDelete as number, true);
+		// prettier-ignore
+		await channel.bulkDelete(
+			user
+				? (await channel.awaitMessages())
+					.filter(item => item.member === user)
+					.toJSON()
+					.filter((_, index) => (numberToDelete !== null ? index < numberToDelete : true))
+				: (numberToDelete as number),
+			true
+		);
 
-		embed
-			.setTitle("Valve thermostatique textuelle")
-			.setDescription(`Les ${numberToDelete} message(s) ont été supprimés, chef`);
-
-		return await replyToInteraction(interaction, embed);
+		return await replyToInteraction(
+			interaction,
+			embed
+				.setTitle("Valve thermostatique textuelle")
+				.setDescription(`Les ${numberToDelete} message(s) ont été supprimés, chef`)
+		);
 	}
 };
 

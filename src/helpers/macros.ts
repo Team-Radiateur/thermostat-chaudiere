@@ -63,7 +63,7 @@ export const prepareResponseToInteraction = async (interaction: CommandInteracti
 		return await replyToInteraction(
 			interaction,
 			prepareEmbed(interaction.user)
-				.setTitle("Valve thermostatique administrative")
+				.setTitle("Valve thermostatique générale")
 				.setDescription("Tu t'es pris pour qui là ?"),
 			true
 		);
