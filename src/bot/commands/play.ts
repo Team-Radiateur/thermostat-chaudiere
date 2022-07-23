@@ -1,4 +1,4 @@
-import { hyperlink, SlashCommandBuilder } from "@discordjs/builders";
+import { bold, hyperlink, SlashCommandBuilder } from "@discordjs/builders";
 import { Song } from "discord-music-player";
 import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
@@ -56,7 +56,7 @@ const play: DiscordCommand = {
 			let songOrPlaylist;
 
 			try {
-				songOrPlaylist = uri.includes("list") ? await queue.play(uri) : await queue.playlist(uri);
+				songOrPlaylist = !uri.includes("list") ? await queue.play(uri) : await queue.playlist(uri);
 			} catch (error) {
 				return await interaction.reply({
 					content: `❌ | Le morceau **${uri}** n'a pas été trouvé !`
@@ -76,7 +76,7 @@ const play: DiscordCommand = {
 			}
 
 			if (queue.songs.length - 1 > 0) {
-				description += "Playlist :";
+				description += `\n\n${bold("Playlist :")}`;
 
 				queue.songs.forEach((song, index) => {
 					if (index !== 0 && !song.name.includes("renarde.m4a")) {
