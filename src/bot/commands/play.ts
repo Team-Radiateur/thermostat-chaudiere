@@ -1,7 +1,8 @@
 import { hyperlink, SlashCommandBuilder } from "@discordjs/builders";
+import { Song } from "discord-music-player";
+import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 const play: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -52,19 +53,27 @@ const play: DiscordCommand = {
 
 			await interaction.deferReply();
 
-			let song;
+			let songOrPlaylist;
+
 			try {
-				song = await queue.play(uri);
+				songOrPlaylist = uri.includes("list") ? await queue.play(uri) : await queue.playlist(uri);
 			} catch (error) {
 				return await interaction.reply({
 					content: `❌ | Le morceau **${uri}** n'a pas été trouvé !`
 				});
 			}
 
-			let description = `${hyperlink(song.name, song.url)} ajouté à la liste de lecture.`;
-
 			embed.setTitle("Valve thermostatique musicale");
-			embed.setThumbnail(song.thumbnail);
+
+			let description;
+
+			if (songOrPlaylist instanceof Song) {
+				description = `${hyperlink(songOrPlaylist.name, songOrPlaylist.url)} ajouté à la liste de lecture.`;
+				embed.setThumbnail(songOrPlaylist.thumbnail);
+			} else {
+				description = `Playlist **${songOrPlaylist.name}** ajoutée à la liste de lecture.`;
+				embed.setThumbnail(songOrPlaylist.songs[0].thumbnail);
+			}
 
 			if (queue.songs.length - 1 > 0) {
 				description += "Playlist :";
