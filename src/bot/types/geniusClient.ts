@@ -1,13 +1,13 @@
-import Genius from "genius-lyrics";
+import { Client } from "genius-lyrics";
 
 import { env } from "../../../config/env";
 
 export default class GeniusClient {
-	private static instance: Genius.Client;
+	private static instance: Client;
 
-	static getInstance(): Genius.Client {
+	static getInstance(): Client {
 		if (!this.instance) {
-			this.instance = new Genius.Client(env.external.api.genius);
+			this.instance = new Client(env.external.api.genius);
 		}
 
 		return this.instance;
