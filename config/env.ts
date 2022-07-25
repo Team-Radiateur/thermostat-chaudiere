@@ -15,7 +15,7 @@ export const env = {
 		clientId: process.env.CLIENT_ID || "",
 		ownerId: process.env.OWNER_ID || "",
 		botName: process.env.BOT_NAME || "",
-		color: (process.env.BOT_COLOR || "#00ffff") as HexColorString,
+		color: `#${process.env.BOT_COLOR || "00ffff"}` as HexColorString,
 		guilds: guilds,
 		announcementChannelByGuild: (process.env.ANNOUNCEMENT_CHANNELS_BY_GUILD || "")
 			.split(",")
@@ -34,5 +34,10 @@ export const env = {
 		voiceLoggingChannel: process.env.VOICE_LOGGING_CHANNEL || "",
 		userUpdateLoggingChannel: process.env.USER_UPDATE_LOGGING_CHANNEL || "",
 		musicChannels: (process.env.MUSIC_CHANNELS || "").split(",").filter(channel => channel !== "")
+	},
+	external: {
+		api: {
+			genius: process.env.GENIUS_API_KEY || ""
+		}
 	}
 };

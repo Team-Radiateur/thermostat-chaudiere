@@ -1,7 +1,7 @@
 import { hyperlink, SlashCommandBuilder } from "@discordjs/builders";
+import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 const showPlaylist: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -25,7 +25,7 @@ const showPlaylist: DiscordCommand = {
 
 		queue.songs.forEach((song, index) => {
 			if (index !== 0 && !song.name.includes("renarde.m4a")) {
-				embed.addField(`${hyperlink(String(index + 1), song.url)}. ${song.name} (${song.duration})`, song.url);
+				embed.addField(`${index}. ${song.name} (${song.duration})`, hyperlink(song.url, song.url), false);
 			}
 		});
 
