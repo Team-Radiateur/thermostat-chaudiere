@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { prepareEmbed } from "../../helpers/macros";
-import { DiscordPlayer } from "../types/discordClient";
+import { prepareResponseToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
 import GeniusClient from "../types/geniusClient";
@@ -10,7 +9,13 @@ const lyrics: DiscordCommand = {
 		.setName("lyrics")
 		.setDescription("Trouve et affiche les paroles liées à la musique en cours de lecture") as SlashCommandBuilder,
 	execute: async interaction => {
-		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique musicale");
+		const commandData = await prepareResponseToInteraction(interaction);
+
+		if (!commandData) {
+			return;
+		}
+
+		const { queue, embed } = commandData;
 
 		if (!interaction.guild) {
 			return await interaction.reply({
@@ -18,7 +23,7 @@ const lyrics: DiscordCommand = {
 			});
 		}
 
-		const songs = DiscordPlayer.getInstance().getQueue(interaction.guild.id)?.songs;
+		const { songs } = queue;
 		if (!songs || !songs.length) {
 			return await interaction.reply({
 				embeds: [embed.setDescription("Il n'y a pas de musiques dans la playlist")]

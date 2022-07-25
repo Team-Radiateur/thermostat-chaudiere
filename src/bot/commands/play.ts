@@ -58,7 +58,7 @@ const play: DiscordCommand = {
 			try {
 				songOrPlaylist = !uri.includes("list=") ? await queue.play(uri) : await queue.playlist(uri);
 			} catch (error) {
-				return await interaction.reply({
+				return await interaction.followUp({
 					content: `❌ | Le morceau **${uri}** n'a pas été trouvé !`
 				});
 			}
