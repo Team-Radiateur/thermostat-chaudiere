@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { logger } from "../../helpers/logger";
 import { prepareResponseToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
@@ -36,24 +37,31 @@ const lyrics: DiscordCommand = {
 
 		await interaction.deferReply();
 
-		const geniusClient = GeniusClient.getInstance();
-		const found = await geniusClient.songs.search(music || songs[0].name);
+		try {
+			const geniusClient = GeniusClient.getInstance();
+			const found = await geniusClient.songs.search(music || songs[0].name);
 
-		if (!found || !found.length) {
+			if (!found || !found.length) {
+				return await interaction.followUp({
+					embeds: [embed.setDescription("Aucun résultat trouvé pour cette musique")]
+				});
+			}
+
+			const lyrics = await found[0].lyrics();
+
 			return await interaction.followUp({
-				embeds: [embed.setDescription("Aucun résultat trouvé pour cette musique")]
+				embeds: [
+					embed
+						.setDescription(`Paroles trouvées pour ${music || songs[0].name}:\n\n${lyrics}`)
+						.setImage(found[0].image)
+				]
+			});
+		} catch (error) {
+			logger.error("Une erreur est survenue lors de la recherche des paroles d'une musique\n", error);
+			return await interaction.followUp({
+				embeds: [embed.setDescription("Une erreur est survenue lors de la recherche des paroles")]
 			});
 		}
-
-		const lyrics = await found[0].lyrics();
-
-		return await interaction.followUp({
-			embeds: [
-				embed
-					.setDescription(`Paroles trouvées pour ${music || songs[0].name}:\n\n${lyrics}`)
-					.setImage(found[0].image)
-			]
-		});
 	}
 };
 
