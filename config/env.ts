@@ -36,8 +36,10 @@ export const env = {
 		musicChannels: (process.env.MUSIC_CHANNELS || "").split(",").filter(channel => channel !== "")
 	},
 	external: {
-		api: {
-			genius: process.env.GENIUS_API_KEY || ""
+		lyricsApi: {
+			url: process.env.LYRICS_API_URL || "",
+			username: process.env.LYRICS_API_USERNAME || "",
+			password: process.env.LYRICS_API_PASSWORD || ""
 		}
 	}
 };

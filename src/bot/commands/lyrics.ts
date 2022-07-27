@@ -1,9 +1,19 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { logger } from "../../helpers/logger";
+import axios, { AxiosError } from "axios";
+import { env } from "../../../config/env";
 import { prepareResponseToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
-import GeniusClient from "../types/geniusClient";
+
+interface LyricsRequestData {
+	content: string;
+	image: string;
+}
+
+interface LyricsRequestError {
+	error: number;
+	message: string;
+}
 
 const lyrics: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -38,26 +48,34 @@ const lyrics: DiscordCommand = {
 		await interaction.deferReply();
 
 		try {
-			const geniusClient = GeniusClient.getInstance();
-			const found = await geniusClient.songs.search(music || songs[0].name);
-
-			if (!found || !found.length) {
-				return await interaction.followUp({
-					embeds: [embed.setDescription("Aucun résultat trouvé pour cette musique")]
-				});
-			}
-
-			const lyrics = await found[0].lyrics();
+			const { data } = await axios.get<LyricsRequestData>(
+				`${env.external.lyricsApi.url}/${encodeURIComponent(music || songs[0].name)}`,
+				{
+					headers: {
+						username: env.external.lyricsApi.username,
+						password: env.external.lyricsApi.password
+					}
+				}
+			);
 
 			return await interaction.followUp({
 				embeds: [
 					embed
-						.setDescription(`Paroles trouvées pour ${music || songs[0].name}:\n\n${lyrics}`)
-						.setImage(found[0].image)
+						.setDescription(`Paroles trouvées pour ${music || songs[0].name}:\n\n${data.content}`)
+						.setImage(data.image)
 				]
 			});
-		} catch (error) {
-			logger.error("Une erreur est survenue lors de la recherche des paroles d'une musique\n", error);
+		} catch (err) {
+			const error = err as Error | AxiosError;
+
+			if (axios.isAxiosError(error)) {
+				if ((<AxiosError<LyricsRequestError>>error).response?.data?.error === 404) {
+					return await interaction.followUp({
+						embeds: [embed.setDescription("Aucun résultat trouvé pour cette musique")]
+					});
+				}
+			}
+
 			return await interaction.followUp({
 				embeds: [embed.setDescription("Une erreur est survenue lors de la recherche des paroles")]
 			});
