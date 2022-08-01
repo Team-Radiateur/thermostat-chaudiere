@@ -1,4 +1,12 @@
-import { CommandInteraction, Guild, GuildMember, MessageEmbed, Permissions, User } from "discord.js";
+import {
+	CommandInteraction,
+	Guild,
+	GuildMember,
+	GuildMemberRoleManager,
+	MessageEmbed,
+	Permissions,
+	User
+} from "discord.js";
 import { setTimeout } from "timers/promises";
 import { env } from "../../config/env";
 import { DiscordClient, DiscordPlayer } from "../bot/types/discordClient";
@@ -94,4 +102,12 @@ export const prepareResponseToInteraction = async (interaction: CommandInteracti
 		channel,
 		embed: prepareEmbed(interaction.user).setTitle("Valve thermostatique musicale")
 	};
+};
+
+export const isAllowed = (member: GuildMember | undefined) => {
+	return env.bot.modsIds.some(id =>
+		Array.isArray(member?.roles)
+			? (member?.roles as string[]).includes(id)
+			: (member?.roles as GuildMemberRoleManager).cache.has(id)
+	);
 };

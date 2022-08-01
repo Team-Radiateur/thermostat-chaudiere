@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Permissions } from "discord.js";
+import { GuildMember } from "discord.js";
 
 import { BannedWord } from "../../databases/sqlite/bannedWord";
-import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
+import { isAllowed, prepareEmbed, replyToInteraction } from "../../helpers/macros";
 import { string } from "../../helpers/string";
 
 import { DiscordClient } from "../types/discordClient";
@@ -18,7 +18,7 @@ const banWord: DiscordCommand = {
 	execute: async interaction => {
 		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique textuelle");
 
-		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
+		if (!isAllowed(interaction.member as GuildMember | undefined)) {
 			return await replyToInteraction(
 				interaction,
 				embed

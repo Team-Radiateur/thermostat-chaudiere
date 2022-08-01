@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { EmbedFieldData, GuildMemberRoleManager } from "discord.js";
-import { env } from "../../../config/env";
+import { EmbedFieldData, GuildMember } from "discord.js";
 
 import { BannedWord } from "../../databases/sqlite/bannedWord";
-import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
+import { isAllowed, prepareEmbed, replyToInteraction } from "../../helpers/macros";
 import { DiscordClient } from "../types/discordClient";
 
 import { DiscordCommand } from "../types/discordEvents";
@@ -11,13 +10,7 @@ import { DiscordCommand } from "../types/discordEvents";
 const showBannedWordsList: DiscordCommand = {
 	data: new SlashCommandBuilder().setName("liste_mots").setDescription("Affiche la liste des mots bannis"),
 	execute: async interaction => {
-		if (
-			!env.bot.modsIds.some(id =>
-				Array.isArray(interaction.member?.roles)
-					? (interaction.member?.roles as string[]).includes(id)
-					: (interaction.member?.roles as GuildMemberRoleManager).cache.has(id)
-			)
-		) {
+		if (!isAllowed(interaction.member as GuildMember | undefined)) {
 			return await replyToInteraction(
 				interaction,
 				prepareEmbed(interaction.user)
