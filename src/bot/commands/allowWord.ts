@@ -18,7 +18,7 @@ const allowWord: DiscordCommand = {
 	execute: async interaction => {
 		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique textuelle");
 
-		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR]))
+		if (!interaction.memberPermissions?.has([Permissions.FLAGS.BAN_MEMBERS]))
 			return await replyToInteraction(
 				interaction,
 				embed

@@ -10,7 +10,7 @@ import { DiscordCommand } from "../types/discordEvents";
 const showBannedWordsList: DiscordCommand = {
 	data: new SlashCommandBuilder().setName("liste_mots").setDescription("Affiche la liste des mots bannis"),
 	execute: async interaction => {
-		if (!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
+		if (!interaction.memberPermissions?.has([Permissions.FLAGS.BAN_MEMBERS])) {
 			return await replyToInteraction(
 				interaction,
 				prepareEmbed(interaction.user)
