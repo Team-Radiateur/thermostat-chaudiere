@@ -13,7 +13,7 @@ const showBannedWordsList: DiscordCommand = {
 	execute: async interaction => {
 		if (
 			(Array.isArray(interaction.member?.roles) &&
-				env.bot.modsIds.some(id => (interaction.member?.roles as string[]).includes(id))) ||
+				!env.bot.modsIds.some(id => (interaction.member?.roles as string[]).includes(id))) ||
 			!env.bot.modsIds.some(id => (interaction.member?.roles as GuildMemberRoleManager).cache.has(id))
 		) {
 			return await replyToInteraction(
