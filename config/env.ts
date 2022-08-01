@@ -16,6 +16,7 @@ export const env = {
 		ownerId: process.env.OWNER_ID || "",
 		botName: process.env.BOT_NAME || "",
 		color: `#${process.env.BOT_COLOR || "00ffff"}` as HexColorString,
+		modsIds: (process.env.MODS_IDS || "").split(",").filter(id => id !== ""),
 		guilds: guilds,
 		announcementChannelByGuild: (process.env.ANNOUNCEMENT_CHANNELS_BY_GUILD || "")
 			.split(",")
