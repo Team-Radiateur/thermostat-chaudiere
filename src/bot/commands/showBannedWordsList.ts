@@ -12,9 +12,11 @@ const showBannedWordsList: DiscordCommand = {
 	data: new SlashCommandBuilder().setName("liste_mots").setDescription("Affiche la liste des mots bannis"),
 	execute: async interaction => {
 		if (
-			(Array.isArray(interaction.member?.roles) &&
-				!env.bot.modsIds.some(id => (interaction.member?.roles as string[]).includes(id))) ||
-			!env.bot.modsIds.some(id => (interaction.member?.roles as GuildMemberRoleManager).cache.has(id))
+			!env.bot.modsIds.some(id =>
+				Array.isArray(interaction.member?.roles)
+					? (interaction.member?.roles as string[]).includes(id)
+					: (interaction.member?.roles as GuildMemberRoleManager).cache.has(id)
+			)
 		) {
 			return await replyToInteraction(
 				interaction,
