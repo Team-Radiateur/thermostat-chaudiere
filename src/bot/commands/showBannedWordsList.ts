@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { EmbedFieldData, GuildMemberRoleManager, Permissions } from "discord.js";
+import { EmbedFieldData, GuildMemberRoleManager } from "discord.js";
 import { env } from "../../../config/env";
 
 import { BannedWord } from "../../databases/sqlite/bannedWord";
@@ -12,12 +12,9 @@ const showBannedWordsList: DiscordCommand = {
 	data: new SlashCommandBuilder().setName("liste_mots").setDescription("Affiche la liste des mots bannis"),
 	execute: async interaction => {
 		if (
-			!interaction.memberPermissions?.has([Permissions.FLAGS.BAN_MEMBERS]) ||
-			!interaction.member ||
-			!interaction.member.roles ||
-			(Array.isArray(interaction.member.roles) &&
+			(Array.isArray(interaction.member?.roles) &&
 				env.bot.modsIds.some(id => (interaction.member?.roles as string[]).includes(id))) ||
-			env.bot.modsIds.some(id => (interaction.member?.roles as GuildMemberRoleManager).cache.has(id))
+			!env.bot.modsIds.some(id => (interaction.member?.roles as GuildMemberRoleManager).cache.has(id))
 		) {
 			return await replyToInteraction(
 				interaction,
