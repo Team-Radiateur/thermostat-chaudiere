@@ -35,7 +35,7 @@ export class DiscordClient {
 				]
 			});
 
-			DiscordClient.database = new Database(`${__dirname}/../../../../resources/databases/bot.sqlite`);
+			DiscordClient.database = new Database(`${__dirname}/../../../../data/bot.sqlite`);
 			DiscordClient.commands = new Collection();
 		}
 
