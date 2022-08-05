@@ -14,7 +14,7 @@ const guildMemberAdd: DiscordEvent = {
 
 		if (channel && channel.isText()) {
 			const embed = prepareEmbed(DiscordClient.getInstance().user as User).setTitle(
-				"Valve thermostatique de bienvenue"
+				"Valve thermostatique des ressources humaines"
 			);
 
 			embed.setDescription(`Arrivée sur le serveur de ${userMention(member.id)}`);

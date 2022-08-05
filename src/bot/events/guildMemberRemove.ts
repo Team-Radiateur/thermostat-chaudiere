@@ -11,7 +11,7 @@ const guildMemberRemove: DiscordEvent = {
 		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guild.id]);
 
 		if (channel && channel.isText()) {
-			const embed = prepareEmbed(member.user).setTitle("Valve thermostatique administrative");
+			const embed = prepareEmbed(member.user).setTitle("Valve thermostatique des ressources humaines");
 
 			await channel.send({ embeds: [embed.setDescription(`${member.user.tag} a quitté le serveur.`)] });
 		}

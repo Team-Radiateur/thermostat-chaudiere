@@ -1,5 +1,6 @@
-import { Guild, Presence } from "discord.js";
+import { Guild, Presence, User } from "discord.js";
 import { env } from "../../../config/env";
+import { prepareEmbed } from "../../helpers/macros";
 import { DiscordClient } from "../types/discordClient";
 import { DiscordEvent } from "../types/discordEvents";
 
@@ -14,25 +15,16 @@ const presenceUpdate: DiscordEvent = {
 			env.bot.userUpdateLoggingChannelByGuild[(newPresence.guild as Guild).id]
 		);
 		if (!loggingChannel || !loggingChannel.isText()) return;
-		// TODO: See if we can use the presenceUpdate event to log the user's status.
-		// const embed = new MessageEmbed()
-		// 	.setTitle(bold(`${oldPresence?.user?.tag} a mis à jour son profil !`))
-		// 	.setColor("#00ffff")
-		// 	.setFooter({ text: `ID de l'utilisateur: ${newPresence.userId} • ${new Date().toLocaleString("fr")}` })
-		// 	.setAuthor({ name: newPresence.user?.tag || "", iconURL: newPresence.user?.displayAvatarURL() });
-		//
-		// if (
-		// 	!oldPresence?.activities?.every(
-		// 		(activity, index) => activity.type !== newPresence?.activities?.[index]?.type
-		// 	)
-		// ) {
-		// 	embed.addField(
-		// 		"Activité",
-		// 		`${oldPresence?.activities?.[0]?.type} => ${newPresence?.activities?.[0]?.type}`
-		// 	);
-		// }
-		//
-		// loggingChannel.send({ embeds: [embed] });
+
+		const embed = prepareEmbed(oldPresence?.user || (newPresence?.user as User)).setTitle(
+			"Valve thermostatique des ressources humaines"
+		);
+
+		if (oldPresence?.status !== newPresence?.status) {
+			embed.addField("Statut", `${oldPresence?.status} => ${newPresence?.status}`);
+		}
+
+		loggingChannel.send({ embeds: [embed] });
 	}
 };
 
