@@ -13,11 +13,9 @@ const guildMemberAdd: DiscordEvent = {
 		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guild.id]);
 
 		if (channel && channel.isText()) {
-			const embed = prepareEmbed(DiscordClient.getInstance().user as User).setTitle(
-				"Valve thermostatique des ressources humaines"
-			);
-
-			embed.setDescription(`Arrivée sur le serveur de ${userMention(member.id)}`);
+			const embed = prepareEmbed(DiscordClient.getInstance().user as User)
+				.setTitle("Valve thermostatique des ressources humaines")
+				.setDescription(`Arrivée sur le serveur de ${userMention(member.id)}`);
 
 			await channel.send({ embeds: [embed] });
 		}

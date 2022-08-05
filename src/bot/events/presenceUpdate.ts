@@ -16,12 +16,14 @@ const presenceUpdate: DiscordEvent = {
 		);
 		if (!loggingChannel || !loggingChannel.isText()) return;
 
-		const embed = prepareEmbed(oldPresence?.user || (newPresence?.user as User)).setTitle(
-			"Valve thermostatique des ressources humaines"
-		);
+		const embed = prepareEmbed(oldPresence?.user || (newPresence?.user as User))
+			.setTitle("Valve thermostatique des ressources humaines")
+			.setDescription("Mise à jour du statut.");
 
 		if (oldPresence?.status !== newPresence?.status) {
 			embed.addField("Statut", `${oldPresence?.status} => ${newPresence?.status}`);
+		} else {
+			return;
 		}
 
 		loggingChannel.send({ embeds: [embed] });

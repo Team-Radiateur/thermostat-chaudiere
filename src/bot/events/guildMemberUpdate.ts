@@ -14,7 +14,7 @@ const guildMemberUpdate: DiscordEvent = {
 		if (channel && channel.isText()) {
 			const embed = prepareEmbed(newMember.user)
 				.setTitle("Valve thermostatique des ressources humaines")
-				.setDescription(`${newMember.user.tag} a mis a jour des informations.`);
+				.setDescription(`${newMember.user.tag} a mis à jour des informations.`);
 
 			if (oldMember.nickname !== newMember.nickname) {
 				embed.addField("Surnom", `${oldMember.nickname} => ${newMember.nickname}`);

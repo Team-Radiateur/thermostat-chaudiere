@@ -1,3 +1,4 @@
+import { randomInt } from "crypto";
 import { GuildMember } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
@@ -12,8 +13,29 @@ const guildMemberRemove: DiscordEvent = {
 
 		if (channel && channel.isText()) {
 			const embed = prepareEmbed(member.user).setTitle("Valve thermostatique des ressources humaines");
+			let description = `${member.user.tag} a quitté le serveur.`;
 
-			await channel.send({ embeds: [embed.setDescription(`${member.user.tag} a quitté le serveur.`)] });
+			switch (randomInt(0, 100)) {
+				case 0:
+					description += " :smirk:";
+					break;
+				case 1:
+					description += " :cry:";
+					break;
+				case 69:
+					description += " À plus la connaissance d'ami.";
+					break;
+				case 99:
+					description += " Nous penserons souvent à toi.";
+					break;
+				case 100:
+					description += " Enfin un connard de moins.";
+					break;
+				default:
+					break;
+			}
+
+			await channel.send({ embeds: [embed.setDescription(description)] });
 		}
 	}
 };
