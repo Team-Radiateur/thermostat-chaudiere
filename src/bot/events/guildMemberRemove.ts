@@ -1,16 +1,19 @@
-import { DiscordEvent } from "../types/discordEvents";
 import { GuildMember } from "discord.js";
 import { env } from "../../../config/env";
+import { prepareEmbed } from "../../helpers/macros";
+import { DiscordEvent } from "../types/discordEvents";
 
 const guildMemberRemove: DiscordEvent = {
 	name: "guildMemberRemove",
 	once: false,
 	execute: async (member: GuildMember) => {
 		const { guild } = member;
-		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannel);
+		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guild.id]);
 
 		if (channel && channel.isText()) {
-			await channel.send(`${member.user.username} a quitté le serveur.`);
+			const embed = prepareEmbed(member.user).setTitle("Valve thermostatique administrative");
+
+			await channel.send({ embeds: [embed.setDescription(`${member.user.tag} a quitté le serveur.`)] });
 		}
 	}
 };

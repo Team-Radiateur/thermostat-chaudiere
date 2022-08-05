@@ -2,10 +2,10 @@ import { GuildMember, User, VoiceState } from "discord.js";
 
 import { env } from "../../../config/env";
 import { logger } from "../../helpers/logger";
+import { prepareEmbed } from "../../helpers/macros";
 
 import { DiscordClient } from "../types/discordClient";
 import { DiscordEvent } from "../types/discordEvents";
-import { prepareEmbed } from "../../helpers/macros";
 
 const voiceStateUpdate: DiscordEvent = {
 	name: "voiceStateUpdate",
@@ -14,7 +14,9 @@ const voiceStateUpdate: DiscordEvent = {
 		const newUserChannel = newState.channel;
 		const oldUserChannel = oldState.channel;
 
-		const loggingChannel = DiscordClient.getInstance().channels.cache.get(env.bot.voiceLoggingChannel);
+		const loggingChannel = DiscordClient.getInstance().channels.cache.get(
+			env.bot.voiceLoggingChannelByGuild[newState.guild.id]
+		);
 
 		if (!oldUserChannel) {
 			if (newUserChannel) {

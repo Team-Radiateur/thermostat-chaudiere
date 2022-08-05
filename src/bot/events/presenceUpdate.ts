@@ -1,7 +1,7 @@
-import { DiscordEvent } from "../types/discordEvents";
-import { Presence } from "discord.js";
-import { DiscordClient } from "../types/discordClient";
+import { Guild, Presence } from "discord.js";
 import { env } from "../../../config/env";
+import { DiscordClient } from "../types/discordClient";
+import { DiscordEvent } from "../types/discordEvents";
 
 const presenceUpdate: DiscordEvent = {
 	name: "presenceUpdate",
@@ -10,7 +10,9 @@ const presenceUpdate: DiscordEvent = {
 		if (oldPresence?.user?.bot) return;
 		if (newPresence?.user?.bot) return;
 
-		const loggingChannel = DiscordClient.getInstance().channels.cache.get(env.bot.userUpdateLoggingChannel);
+		const loggingChannel = DiscordClient.getInstance().channels.cache.get(
+			env.bot.userUpdateLoggingChannelByGuild[(newPresence.guild as Guild).id]
+		);
 		if (!loggingChannel || !loggingChannel.isText()) return;
 		// TODO: See if we can use the presenceUpdate event to log the user's status.
 		// const embed = new MessageEmbed()

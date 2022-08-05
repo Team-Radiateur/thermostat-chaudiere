@@ -32,8 +32,28 @@ export const env = {
 
 				return accumulator;
 			}, {} as { [guild: string]: { channel: string; toTag: string } }),
-		voiceLoggingChannel: process.env.VOICE_LOGGING_CHANNEL || "",
-		userUpdateLoggingChannel: process.env.USER_UPDATE_LOGGING_CHANNEL || "",
+		voiceLoggingChannelByGuild: (process.env.VOICE_LOGGING_CHANNEL_BY_GUILD || "")
+			.split(",")
+			.filter(channel => channel !== "")
+			.reduce((accumulator, channelGuild) => {
+				const [guild, channel] = channelGuild.split(":");
+				if (guild && channel && guilds.find(guildId => guildId === guild)) {
+					accumulator[guild] = channel;
+				}
+
+				return accumulator;
+			}, {} as { [guild: string]: string }),
+		userUpdateLoggingChannelByGuild: (process.env.USER_UPDATE_LOGGING_CHANNEL_BY_GUILD || "")
+			.split(",")
+			.filter(channel => channel !== "")
+			.reduce((accumulator, channelGuild) => {
+				const [guild, channel] = channelGuild.split(":");
+				if (guild && channel && guilds.find(guildId => guildId === guild)) {
+					accumulator[guild] = channel;
+				}
+
+				return accumulator;
+			}, {} as { [guild: string]: string }),
 		musicChannels: (process.env.MUSIC_CHANNELS || "").split(",").filter(channel => channel !== "")
 	},
 	external: {
