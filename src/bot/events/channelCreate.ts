@@ -9,7 +9,9 @@ const channelCreate: DiscordEvent = {
 	once: false,
 	execute: async (newChannel: GuildChannel) => {
 		const { guild } = newChannel;
-		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guild.id]);
+		const channel = DiscordClient.getInstance().channels.cache.get(
+			env.bot.userUpdateLoggingChannelByGuild[guild.id]
+		);
 
 		const embed = prepareEmbed(DiscordClient.getInstance().user as User)
 			.setTitle("Valve thermostatique administrative")

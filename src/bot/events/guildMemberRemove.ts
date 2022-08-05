@@ -2,6 +2,7 @@ import { randomInt } from "crypto";
 import { GuildMember } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
+import { DiscordClient } from "../types/discordClient";
 import { DiscordEvent } from "../types/discordEvents";
 
 const guildMemberRemove: DiscordEvent = {
@@ -9,7 +10,9 @@ const guildMemberRemove: DiscordEvent = {
 	once: false,
 	execute: async (member: GuildMember) => {
 		const { guild } = member;
-		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guild.id]);
+		const channel = DiscordClient.getInstance().channels.cache.get(
+			env.bot.userUpdateLoggingChannelByGuild[guild.id]
+		);
 
 		if (channel && channel.isText()) {
 			const embed = prepareEmbed(member.user).setTitle("Valve thermostatique des ressources humaines");

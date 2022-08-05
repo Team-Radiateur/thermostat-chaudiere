@@ -2,6 +2,7 @@ import { hyperlink, roleMention } from "@discordjs/builders";
 import { GuildMember } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
+import { DiscordClient } from "../types/discordClient";
 import { DiscordEvent } from "../types/discordEvents";
 
 const guildMemberUpdate: DiscordEvent = {
@@ -9,7 +10,9 @@ const guildMemberUpdate: DiscordEvent = {
 	once: false,
 	execute: async (oldMember: GuildMember, newMember: GuildMember) => {
 		const { guild } = newMember;
-		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guild.id]);
+		const channel = DiscordClient.getInstance().channels.cache.get(
+			env.bot.userUpdateLoggingChannelByGuild[guild.id]
+		);
 
 		if (channel && channel.isText()) {
 			const embed = prepareEmbed(newMember.user)

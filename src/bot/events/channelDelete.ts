@@ -9,7 +9,9 @@ const channelDelete: DiscordEvent = {
 	once: false,
 	execute: async (deletedChannel: GuildChannel) => {
 		const { guild } = deletedChannel;
-		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guild.id]);
+		const channel = DiscordClient.getInstance().channels.cache.get(
+			env.bot.userUpdateLoggingChannelByGuild[guild.id]
+		);
 
 		if (channel && channel.isText()) {
 			const embed = prepareEmbed(DiscordClient.getInstance().user as User)

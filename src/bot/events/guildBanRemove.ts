@@ -2,6 +2,7 @@ import { userMention } from "@discordjs/builders";
 import { GuildBan } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
+import { DiscordClient } from "../types/discordClient";
 import { DiscordEvent } from "../types/discordEvents";
 
 const guildBanRemove: DiscordEvent = {
@@ -9,7 +10,9 @@ const guildBanRemove: DiscordEvent = {
 	once: false,
 	execute: async (ban: GuildBan) => {
 		const { guild } = ban;
-		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guild.id]);
+		const channel = DiscordClient.getInstance().channels.cache.get(
+			env.bot.userUpdateLoggingChannelByGuild[guild.id]
+		);
 
 		if (channel && channel.isText()) {
 			const embed = prepareEmbed(ban.user).setTitle("Valve thermostatique administrative");

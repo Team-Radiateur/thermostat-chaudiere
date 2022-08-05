@@ -10,7 +10,9 @@ const guildMemberAdd: DiscordEvent = {
 	once: false,
 	execute: async (member: GuildMember) => {
 		const { guild } = member;
-		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guild.id]);
+		const channel = DiscordClient.getInstance().channels.cache.get(
+			env.bot.userUpdateLoggingChannelByGuild[guild.id]
+		);
 
 		if (channel && channel.isText()) {
 			const embed = prepareEmbed(DiscordClient.getInstance().user as User)

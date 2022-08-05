@@ -27,7 +27,9 @@ const channelUpdate: DiscordEvent = {
 	once: false,
 	execute: async (oldChannel: GuildChannel, newChannel: GuildChannel) => {
 		const { guild } = newChannel;
-		const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guild.id]);
+		const channel = DiscordClient.getInstance().channels.cache.get(
+			env.bot.userUpdateLoggingChannelByGuild[guild.id]
+		);
 
 		if (channel && channel.isText()) {
 			const embed = prepareEmbed(DiscordClient.getInstance().user as User).setTitle(
