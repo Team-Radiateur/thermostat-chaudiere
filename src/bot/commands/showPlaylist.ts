@@ -25,7 +25,13 @@ const showPlaylist: DiscordCommand = {
 
 		queue.songs.forEach((song, index) => {
 			if (index !== 0 && !song.name.includes("renarde.m4a")) {
-				embed.addField(`${index}. ${song.name} (${song.duration})`, hyperlink(song.url, song.url), false);
+				embed.addFields([
+					{
+						name: `${index}. ${song.name} (${song.duration})`,
+						value: hyperlink(song.url, song.url),
+						inline: false
+					}
+				]);
 			}
 		});
 

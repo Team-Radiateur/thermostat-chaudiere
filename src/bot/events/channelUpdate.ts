@@ -1,6 +1,5 @@
 import { channelMention, inlineCode } from "@discordjs/builders";
-import { GuildChannel, User } from "discord.js";
-import { ChannelTypes } from "discord.js/typings/enums";
+import { ChannelType, GuildChannel, User, VoiceChannel } from "discord.js";
 
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
@@ -8,15 +7,19 @@ import { permissionToName } from "../../helpers/permissionsToName";
 import { DiscordClient } from "../types/discordClient";
 import { DiscordEvent } from "../types/discordEvents";
 
-const getType = (type: Exclude<keyof typeof ChannelTypes, "DM" | "GROUP_DM" | "UNKNOWN">) => {
+const getType = (type: ChannelType) => {
 	switch (type) {
-		case "GUILD_TEXT":
-			return "Texte";
-		case "GUILD_VOICE":
-			return "Vocal";
-		case "GUILD_CATEGORY":
-			return "Catégorie";
-		case "GUILD_NEWS":
+		case ChannelType.GuildText:
+			return "salon textuel";
+		case ChannelType.GuildVoice:
+			return "salon vocal";
+		case ChannelType.DM:
+			return "salon privé";
+		case ChannelType.GroupDM:
+			return "salon de groupe";
+		case ChannelType.GuildCategory:
+			return "catégorie";
+		case ChannelType.GuildNews:
 			return "News";
 		default:
 			return "Inconnu";
@@ -32,7 +35,7 @@ const channelUpdate: DiscordEvent = {
 			env.bot.userUpdateLoggingChannelByGuild[guild.id]
 		);
 
-		if (channel && channel.isText()) {
+		if (channel && channel.type === ChannelType.GuildText) {
 			const embed = prepareEmbed(DiscordClient.getInstance().user as User).setTitle(
 				"Valve thermostatique administrative"
 			);
@@ -40,57 +43,97 @@ const channelUpdate: DiscordEvent = {
 			embed.setDescription(`Mise à jour du salon ${channelMention(oldChannel.id)}`);
 
 			if (oldChannel.name !== newChannel.name) {
-				embed.addField("Changement de nom", `${inlineCode(oldChannel.name)} => ${inlineCode(newChannel.name)}`);
+				embed.addFields([
+					{
+						name: "Changement de nom",
+						value: `${inlineCode(oldChannel.name)} => ${inlineCode(newChannel.name)}`
+					}
+				]);
 			}
 
 			if (oldChannel.position !== newChannel.position) {
-				embed.addField("Changement de position", `${oldChannel.position} => ${newChannel.position}`);
+				embed.addFields([
+					{
+						name: "Changement de position",
+						value: `${oldChannel.position} => ${newChannel.position}`
+					}
+				]);
 			}
 
-			if (oldChannel.isVoice()) {
-				if (newChannel.isVoice()) {
-					if (oldChannel.rtcRegion !== newChannel.rtcRegion) {
-						embed.addField("Changement de région", `${oldChannel.rtcRegion} => ${newChannel.rtcRegion}`);
+			if (oldChannel.type === ChannelType.GuildVoice) {
+				if (newChannel.type === ChannelType.GuildVoice) {
+					if ((oldChannel as VoiceChannel).rtcRegion !== (newChannel as VoiceChannel).rtcRegion) {
+						embed.addFields([
+							{
+								name: "Changement de région",
+								value: `${(<VoiceChannel>oldChannel).rtcRegion} => ${
+									(<VoiceChannel>newChannel).rtcRegion
+								}`
+							}
+						]);
 					}
 				} else {
-					embed.addField("Changement de type", `Vocal => ${getType(newChannel.type)}`);
+					embed.addFields([
+						{
+							name: "Changement de type",
+							value: `Vocal => ${getType(newChannel.type)}`
+						}
+					]);
 				}
-			} else if (oldChannel.isText()) {
-				if (newChannel.isText()) {
+			} else if (channel.type === ChannelType.GuildText) {
+				if (newChannel.type === ChannelType.GuildText) {
 					if (oldChannel.permissionOverwrites.cache !== newChannel.permissionOverwrites.cache) {
-						embed.addField(
-							`Changement de permissions pour ${newChannel.name}`,
-							`${oldChannel.permissionOverwrites.cache} => ${newChannel.permissionOverwrites.cache}`
-						);
+						embed.addFields([
+							{
+								name: `Changement de permissions pour ${newChannel.name}`,
+								value: `${oldChannel.permissionOverwrites.cache
+									.toJSON()
+									.join(", ")} => ${newChannel.permissionOverwrites.cache.toJSON().join(", ")}`
+							}
+						]);
 					}
 				} else {
-					embed.addField("Changement de type", `Texte => ${getType(newChannel.type)}`);
+					embed.addFields([
+						{
+							name: "Changement de type",
+							value: `Texte => ${getType(newChannel.type)}`
+						}
+					]);
 				}
-			} else if (oldChannel.isDirectory()) {
-				if (newChannel.isDirectory()) {
+			} else if (oldChannel.type === ChannelType.GuildCategory) {
+				if (newChannel.type === ChannelType.GuildCategory) {
 					if (oldChannel.permissionOverwrites.cache !== newChannel.permissionOverwrites.cache) {
 						oldChannel.permissionOverwrites.cache
 							.difference(newChannel.permissionOverwrites.cache)
 							.map(permissionOverwrite => {
-								embed.addField(
-									`Permissions accordées pour ${newChannel.name}`,
-									`${permissionOverwrite.allow
-										.toArray()
-										.map(permission => permissionToName(permission))
-										.join(", ")}`
-								);
+								embed.addFields([
+									{
+										name: `Permissions accordées pour ${newChannel.name}`,
+										value: `${permissionOverwrite.allow
+											.toArray()
+											.map(permission => permissionToName(permission))
+											.join(", ")}`
+									}
+								]);
 
-								embed.addField(
-									`Permissions refusées pour ${newChannel.name}`,
-									`${permissionOverwrite.deny
-										.toArray()
-										.map(permission => permissionToName(permission))
-										.join(", ")}`
-								);
+								embed.addFields([
+									{
+										name: `Permissions refusées pour ${newChannel.name}`,
+										value: `${permissionOverwrite.deny
+											.toArray()
+											.map(permission => permissionToName(permission))
+											.join(", ")}`
+									}
+								]);
 							});
 					}
 				} else {
-					embed.addField("Changement de type", `Dossier => ${getType((<GuildChannel>newChannel).type)}`);
+					embed.addFields([
+						{
+							name: "Changement de type",
+							value: `Dossier => ${getType((<GuildChannel>newChannel).type)}`
+						}
+					]);
 				}
 			}
 

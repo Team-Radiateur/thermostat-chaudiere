@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 
 const info: DiscordCommand = {
 	data: new SlashCommandBuilder().setName("info").setDescription("Affiche les informations du serveur"),
@@ -11,9 +11,20 @@ const info: DiscordCommand = {
 		const embed = prepareEmbed(interaction.user)
 			.setTitle("Valve thermostatique générale")
 			.setDescription("Voici les informations du serveur :")
-			.addField("🌡 | Température", `${temperature}°C`)
-			.addField("👥 | Nombre de personnes sur le serveur :", `${interaction.guild?.memberCount} personnes`)
-			.addField("🔋 | Nombre de personnes connectées", `${connectedPeople?.size ?? 0} personnes`);
+			.addFields([
+				{
+					name: "🌡 | Température",
+					value: `${temperature}°C`
+				},
+				{
+					name: "👥 | Nombre de personnes sur le serveur :",
+					value: `${interaction.guild?.memberCount} personnes`
+				},
+				{
+					name: "🔋 | Nombre de personnes connectées",
+					value: `${connectedPeople?.size ?? 0} personnes`
+				}
+			]);
 
 		return await replyToInteraction(interaction, embed);
 	}

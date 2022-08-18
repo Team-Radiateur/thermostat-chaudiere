@@ -19,7 +19,7 @@ const play: DiscordCommand = {
 		}
 
 		const { queue, channel, embed } = commandData;
-		const uri = interaction.options.getString("musique");
+		const uri = interaction.options.get("musique");
 
 		if (!uri) {
 			if (!queue.songs.length) {
@@ -56,7 +56,11 @@ const play: DiscordCommand = {
 			let songOrPlaylist;
 
 			try {
-				songOrPlaylist = !uri.includes("list=") ? await queue.play(uri) : await queue.playlist(uri);
+				const uriValue = uri.value as string;
+
+				songOrPlaylist = !uriValue.includes("list=")
+					? await queue.play(uriValue)
+					: await queue.playlist(uriValue);
 			} catch (error) {
 				return await interaction.followUp({
 					content: `❌ | Le morceau **${uri}** n'a pas été trouvé !`
@@ -80,11 +84,13 @@ const play: DiscordCommand = {
 
 				queue.songs.forEach((song, index) => {
 					if (index !== 0 && !song.name.includes("renarde.m4a")) {
-						embed.addField(
-							`${index}. ${song.name} (${song.duration})`,
-							hyperlink(song.url, song.url),
-							false
-						);
+						embed.addFields([
+							{
+								name: `${index}. ${song.name} (${song.duration})`,
+								value: hyperlink(song.url, song.url),
+								inline: false
+							}
+						]);
 					}
 				});
 			}

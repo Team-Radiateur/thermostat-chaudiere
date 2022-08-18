@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Permissions } from "discord.js";
+import { PermissionsBitField } from "discord.js";
 
 import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
@@ -23,7 +23,10 @@ const skip: DiscordCommand = {
 
 		skipList.push(true);
 
-		if (skipList.length === people || interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
+		if (
+			skipList.length === people ||
+			interaction.memberPermissions?.has([PermissionsBitField.Flags.Administrator])
+		) {
 			while (!queue.skip()) {
 				// Wait for the queue to skip the current track
 			}

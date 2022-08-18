@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Permissions } from "discord.js";
+import { PermissionsBitField } from "discord.js";
 
 import { BannedWord } from "../../databases/sqlite/bannedWord";
 import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
@@ -18,7 +18,7 @@ const allowWord: DiscordCommand = {
 	execute: async interaction => {
 		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique textuelle");
 
-		if (!interaction.memberPermissions?.has([Permissions.FLAGS.BAN_MEMBERS]))
+		if (!interaction.memberPermissions?.has([PermissionsBitField.Flags.BanMembers]))
 			return await replyToInteraction(
 				interaction,
 				embed
@@ -27,9 +27,11 @@ const allowWord: DiscordCommand = {
 				true
 			);
 
-		const toHandle = interaction.options.getString("mot");
+		const { value: toHandle } = interaction.options.get("mot", true);
 		const words = DiscordClient.database.prepare("select * from banned_words;").all() as BannedWord[];
-		const filteredWords = words.filter(obj => string.normalized(obj.word) === string.normalized(toHandle || ""));
+		const filteredWords = words.filter(
+			obj => string.normalized(obj.word) === string.normalized((toHandle as string) || "")
+		);
 
 		if (filteredWords.length && words[0].enabled) {
 			const updateStatement = DiscordClient.database.prepare(

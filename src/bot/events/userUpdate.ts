@@ -1,5 +1,5 @@
 import { bold, hyperlink } from "@discordjs/builders";
-import { TextChannel, User } from "discord.js";
+import { ChannelType, TextChannel, User } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
 import { DiscordClient } from "../types/discordClient";
@@ -20,7 +20,7 @@ const userUpdate: DiscordEvent = {
 			if (guild && guild.members.cache.has(newUser.id)) {
 				const channel = guild.channels.cache.get(env.bot.userUpdateLoggingChannelByGuild[guildId]);
 
-				if (channel && channel.isText()) {
+				if (channel && channel.type === ChannelType.GuildText) {
 					loggingChannels.push(channel as TextChannel);
 				}
 			}
@@ -33,19 +33,27 @@ const userUpdate: DiscordEvent = {
 			.setFooter({ text: `ID de l'utilisateur: ${newUser.id}` });
 
 		if (oldUser.displayAvatarURL() !== newUser.displayAvatarURL()) {
-			embed.addField(
-				"Avatar",
-				`${hyperlink("[précédent]", oldUser.displayAvatarURL())} => ${hyperlink(
-					"[nouveau]",
-					newUser.displayAvatarURL()
-				)}`
-			);
+			embed.addFields([
+				{
+					name: "Avatar",
+					value: `${hyperlink("[précédent]", oldUser.displayAvatarURL())} => ${hyperlink(
+						"[nouveau]",
+						newUser.displayAvatarURL()
+					)}`
+				}
+			]);
 		} else if (oldUser.username !== newUser.username) {
-			embed.addField("Nouveau pseudo", `${oldUser.username} => ${newUser.username}`);
+			embed.addFields({
+				name: "Nouveau pseudo",
+				value: `${oldUser.username} => ${newUser.username}`
+			});
 		} else if (oldUser.discriminator !== newUser.discriminator) {
-			embed.addField("Nouveau discriminant", `${oldUser.discriminator} => ${newUser.discriminator}`);
+			embed.addFields({
+				name: "Nouveau discriminant",
+				value: `${oldUser.discriminator} => ${newUser.discriminator}`
+			});
 		} else if (oldUser.tag !== newUser.tag) {
-			embed.addField("Nouveau tag", newUser.tag);
+			embed.addFields([{ name: "Nouveau tag", value: newUser.tag }]);
 		} else {
 			return;
 		}

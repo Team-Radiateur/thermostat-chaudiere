@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 import { Player } from "discord-music-player";
-import { Client, Collection, Intents, Snowflake, TextChannel } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Snowflake, TextChannel } from "discord.js";
 import { env } from "../../../config/env";
 import { logger } from "../../helpers/logger";
 
@@ -19,19 +19,19 @@ export class DiscordClient {
 					repliedUser: true
 				},
 				intents: [
-					Intents.FLAGS.GUILDS,
-					Intents.FLAGS.GUILD_MEMBERS,
-					Intents.FLAGS.GUILD_BANS,
-					Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-					Intents.FLAGS.GUILD_INTEGRATIONS,
-					Intents.FLAGS.GUILD_WEBHOOKS,
-					Intents.FLAGS.GUILD_INVITES,
-					Intents.FLAGS.GUILD_VOICE_STATES,
-					Intents.FLAGS.GUILD_PRESENCES,
-					Intents.FLAGS.GUILD_MESSAGES,
-					Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-					Intents.FLAGS.GUILD_MESSAGE_TYPING,
-					Intents.FLAGS.GUILD_SCHEDULED_EVENTS
+					GatewayIntentBits.Guilds,
+					GatewayIntentBits.GuildMembers,
+					GatewayIntentBits.GuildBans,
+					GatewayIntentBits.GuildEmojisAndStickers,
+					GatewayIntentBits.GuildIntegrations,
+					GatewayIntentBits.GuildWebhooks,
+					GatewayIntentBits.GuildInvites,
+					GatewayIntentBits.GuildVoiceStates,
+					GatewayIntentBits.GuildPresences,
+					GatewayIntentBits.GuildMessages,
+					GatewayIntentBits.GuildMessageReactions,
+					GatewayIntentBits.GuildMessageTyping,
+					GatewayIntentBits.GuildScheduledEvents
 				]
 			});
 

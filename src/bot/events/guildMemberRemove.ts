@@ -1,5 +1,5 @@
 import { randomInt } from "crypto";
-import { GuildMember } from "discord.js";
+import { ChannelType, GuildMember } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
 import { DiscordClient } from "../types/discordClient";
@@ -14,7 +14,7 @@ const guildMemberRemove: DiscordEvent = {
 			env.bot.userUpdateLoggingChannelByGuild[guild.id]
 		);
 
-		if (channel && channel.isText()) {
+		if (channel && channel.type === ChannelType.GuildText) {
 			const embed = prepareEmbed(member.user).setTitle("Valve thermostatique des ressources humaines");
 			let description = `${member.user.tag} a quitté le serveur.`;
 

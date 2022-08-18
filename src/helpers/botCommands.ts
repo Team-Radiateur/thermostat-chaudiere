@@ -1,9 +1,9 @@
-import { Message, Permissions } from "discord.js";
-import { logger } from "./logger";
+import { Message, PermissionsBitField } from "discord.js";
 import { DiscordClient } from "../bot/types/discordClient";
 import { BannedWord } from "../databases/sqlite/bannedWord";
-import { string } from "./string";
+import { logger } from "./logger";
 import { prepareEmbed } from "./macros";
+import { string } from "./string";
 
 export const filter = async (message: Message) => {
 	if (!message.author.bot) {
@@ -12,8 +12,8 @@ export const filter = async (message: Message) => {
 
 	if (
 		message.author.bot ||
-		message.member?.permissions?.has(Permissions.FLAGS.ADMINISTRATOR) ||
-		message.member?.permissions?.has(Permissions.FLAGS.MANAGE_ROLES)
+		message.member?.permissions?.has(PermissionsBitField.Flags.Administrator) ||
+		message.member?.permissions?.has(PermissionsBitField.Flags.ManageRoles)
 	) {
 		return;
 	}

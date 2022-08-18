@@ -1,93 +1,89 @@
-import { PermissionString } from "discord.js";
+import { PermissionsString } from "discord.js";
 
-export const permissionToName = (permission: PermissionString) => {
+export const permissionToName = (permission: PermissionsString) => {
 	switch (permission) {
-		case "CREATE_INSTANT_INVITE":
+		case "CreateInstantInvite":
 			return "Créer une invitation instantanée";
-		case "KICK_MEMBERS":
+		case "KickMembers":
 			return "Expulser des membres";
-		case "BAN_MEMBERS":
+		case "BanMembers":
 			return "Bannir des membres";
-		case "ADMINISTRATOR":
+		case "Administrator":
 			return "Administrateur";
-		case "MANAGE_CHANNELS":
+		case "ManageChannels":
 			return "Gérer les salons";
-		case "MANAGE_GUILD":
+		case "ManageGuild":
 			return "Gérer le serveur";
-		case "ADD_REACTIONS":
+		case "AddReactions":
 			return "Ajouter des réactions";
-		case "VIEW_AUDIT_LOG":
+		case "ViewAuditLog":
 			return "Voir le journal d'audit";
-		case "PRIORITY_SPEAKER":
+		case "PrioritySpeaker":
 			return "Parler en priorité";
-		case "STREAM":
+		case "Stream":
 			return "Stream";
-		case "VIEW_CHANNEL":
+		case "ViewChannel":
 			return "Voir le salon";
-		case "SEND_MESSAGES":
+		case "SendMessages":
 			return "Envoyer des messages";
-		case "SEND_TTS_MESSAGES":
+		case "SendTTSMessages":
 			return "Envoyer des messages TTS";
-		case "MANAGE_MESSAGES":
+		case "ManageMessages":
 			return "Gérer les messages";
-		case "EMBED_LINKS":
+		case "EmbedLinks":
 			return "Liens intégrés";
-		case "ATTACH_FILES":
+		case "AttachFiles":
 			return "Joindre des fichiers";
-		case "READ_MESSAGE_HISTORY":
+		case "ReadMessageHistory":
 			return "Lire l'historique des messages";
-		case "MENTION_EVERYONE":
+		case "MentionEveryone":
 			return "Mentionner tout le monde";
-		case "USE_EXTERNAL_EMOJIS":
+		case "UseExternalEmojis":
 			return "Utiliser des emojis externes";
-		case "VIEW_GUILD_INSIGHTS":
+		case "ViewGuildInsights":
 			return "Voir les analyses du serveur";
-		case "CONNECT":
+		case "Connect":
 			return "Se connecter";
-		case "SPEAK":
+		case "Speak":
 			return "Parler";
-		case "MUTE_MEMBERS":
+		case "MuteMembers":
 			return "Rendre muet les membres";
-		case "DEAFEN_MEMBERS":
+		case "DeafenMembers":
 			return "Rendre sourd les membres";
-		case "MOVE_MEMBERS":
+		case "MoveMembers":
 			return "Déplacer les membres";
-		case "USE_VAD":
+		case "UseVAD":
 			return "Utiliser la voix activée";
-		case "CHANGE_NICKNAME":
+		case "ChangeNickname":
 			return "Changer le pseudo";
-		case "MANAGE_NICKNAMES":
+		case "ManageNicknames":
 			return "Gérer les pseudos";
-		case "MANAGE_ROLES":
+		case "ManageRoles":
 			return "Gérer les rôles";
-		case "MANAGE_WEBHOOKS":
+		case "ManageWebhooks":
 			return "Gérer les webhooks";
-		case "MANAGE_EMOJIS_AND_STICKERS":
+		case "ManageEmojisAndStickers":
 			return "Gérer les emojis et les stickers";
-		case "USE_APPLICATION_COMMANDS":
+		case "UseApplicationCommands":
 			return "Utiliser les commandes d'application";
-		case "REQUEST_TO_SPEAK":
+		case "RequestToSpeak":
 			return "Demander de parler";
-		case "MANAGE_THREADS":
+		case "ManageThreads":
 			return "Gérer les discussions";
-		case "USE_PUBLIC_THREADS":
-			return "Utiliser les discussions publiques";
-		case "CREATE_PUBLIC_THREADS":
-			return "Créer des discussions publiques";
-		case "USE_PRIVATE_THREADS":
-			return "Utiliser les discussions privées";
-		case "CREATE_PRIVATE_THREADS":
-			return "Créer des discussions privées";
-		case "USE_EXTERNAL_STICKERS":
-			return "Utiliser les stickers externes";
-		case "SEND_MESSAGES_IN_THREADS":
-			return "Envoyer des messages dans les discussions";
-		case "START_EMBEDDED_ACTIVITIES":
-			return "Démarrer des activités intégrées";
-		case "MODERATE_MEMBERS":
+		case "ManageEvents":
+			return "Gérer les évènements";
+		case "ModerateMembers":
 			return "Modérer les membres";
-		case "MANAGE_EVENTS":
-			return "Gérer les événements";
+		case "CreatePublicThreads":
+			return "Créer des discussions publiques";
+		case "CreatePrivateThreads":
+			return "Créer des discussions privées";
+		case "UseExternalStickers":
+			return "Utiliser les stickers externes";
+		case "SendMessagesInThreads":
+			return "Envoyer des messages dans les discussions";
+		case "UseEmbeddedActivities":
+			return "Démarrer des activités intégrées";
 	}
 
 	return "Inconnu";

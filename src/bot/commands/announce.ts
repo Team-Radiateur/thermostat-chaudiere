@@ -1,5 +1,5 @@
 import { roleMention, SlashCommandBuilder } from "@discordjs/builders";
-import { Guild, Permissions, TextChannel } from "discord.js";
+import { Guild, PermissionsBitField, TextChannel } from "discord.js";
 
 import { env } from "../../../config/env";
 import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
@@ -16,7 +16,7 @@ const announce: DiscordCommand = {
 	execute: async interaction => {
 		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique textuelle");
 
-		if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
+		if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
 			return await replyToInteraction(
 				interaction,
 				embed.setDescription("Eh, oh ! Tu t'es pris pour qui là, Marseillais ?")
@@ -35,7 +35,7 @@ const announce: DiscordCommand = {
 			);
 		}
 
-		embed.setDescription(interaction.options.getString("message") as string);
+		embed.setDescription(interaction.options.get("message", true).value as string);
 
 		await announcementChannel.send({ content: roleMention(channelAndToTag.toTag), embeds: [embed] });
 

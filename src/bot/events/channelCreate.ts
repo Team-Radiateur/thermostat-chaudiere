@@ -1,4 +1,4 @@
-import { GuildChannel, User } from "discord.js";
+import { ChannelType, GuildChannel, User } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
 import { DiscordClient } from "../types/discordClient";
@@ -17,7 +17,7 @@ const channelCreate: DiscordEvent = {
 			.setTitle("Valve thermostatique administrative")
 			.setDescription(`Le salon ${newChannel.name} a été créé.`);
 
-		if (channel && channel.isText()) {
+		if (channel && channel.type === ChannelType.GuildText) {
 			await channel.send({ embeds: [embed] });
 		}
 	}

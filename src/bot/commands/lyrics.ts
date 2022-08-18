@@ -24,7 +24,7 @@ const lyrics: DiscordCommand = {
 		) as SlashCommandBuilder,
 	execute: async interaction => {
 		const commandData = await prepareResponseToInteraction(interaction);
-		const music = interaction.options.getString("musique");
+		const music = interaction.options.get("musique")?.value;
 
 		if (!commandData) {
 			return;

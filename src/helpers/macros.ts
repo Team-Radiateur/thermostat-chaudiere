@@ -1,10 +1,10 @@
 import {
 	CommandInteraction,
+	EmbedBuilder,
 	Guild,
 	GuildMember,
 	GuildMemberRoleManager,
-	MessageEmbed,
-	Permissions,
+	PermissionsBitField,
 	User
 } from "discord.js";
 import { setTimeout } from "timers/promises";
@@ -33,7 +33,7 @@ export const todo = () => {
 
 export const replyToInteraction = async (
 	interaction: CommandInteraction,
-	message: string | MessageEmbed,
+	message: string | EmbedBuilder,
 	ephemeral = true,
 	deleteAfter5s = false
 ): Promise<void> => {
@@ -49,8 +49,8 @@ export const replyToInteraction = async (
 	}
 };
 
-export const prepareEmbed = (user: User): MessageEmbed => {
-	return new MessageEmbed()
+export const prepareEmbed = (user: User): EmbedBuilder => {
+	return new EmbedBuilder()
 		.setAuthor({
 			name: user.username,
 			iconURL: user.displayAvatarURL()
@@ -66,7 +66,7 @@ export const prepareEmbed = (user: User): MessageEmbed => {
 export const prepareResponseToInteraction = async (interaction: CommandInteraction) => {
 	if (
 		!env.bot.musicChannels.find(channel => channel === interaction.channel?.id) &&
-		!interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])
+		!interaction.memberPermissions?.has([PermissionsBitField.Flags.Administrator])
 	) {
 		return await replyToInteraction(
 			interaction,

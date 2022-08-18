@@ -27,9 +27,11 @@ const banWord: DiscordCommand = {
 			);
 		}
 
-		const toHandle = interaction.options.getString("mot");
+		const { value: toHandle } = interaction.options.get("mot", true);
 		const words = DiscordClient.database.prepare("select * from banned_words;").all() as BannedWord[];
-		const filteredWords = words.filter(obj => string.normalized(obj.word) === string.normalized(toHandle || ""));
+		const filteredWords = words.filter(
+			obj => string.normalized(obj.word) === string.normalized((toHandle as string) || "")
+		);
 
 		if (filteredWords.length) {
 			if (words[0].enabled) return;
