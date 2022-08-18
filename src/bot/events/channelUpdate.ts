@@ -1,9 +1,10 @@
-import { channelMention } from "@discordjs/builders";
+import { channelMention, inlineCode } from "@discordjs/builders";
 import { GuildChannel, User } from "discord.js";
 import { ChannelTypes } from "discord.js/typings/enums";
 
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
+import { permissionToName } from "../../helpers/permissionsToName";
 import { DiscordClient } from "../types/discordClient";
 import { DiscordEvent } from "../types/discordEvents";
 
@@ -39,7 +40,7 @@ const channelUpdate: DiscordEvent = {
 			embed.setDescription(`Mise à jour du salon ${channelMention(oldChannel.id)}`);
 
 			if (oldChannel.name !== newChannel.name) {
-				embed.addField("Changement de nom", `${oldChannel.name} => ${newChannel.name}`);
+				embed.addField("Changement de nom", `${inlineCode(oldChannel.name)} => ${inlineCode(newChannel.name)}`);
 			}
 
 			if (oldChannel.position !== newChannel.position) {
@@ -58,7 +59,7 @@ const channelUpdate: DiscordEvent = {
 				if (newChannel.isText()) {
 					if (oldChannel.permissionOverwrites.cache !== newChannel.permissionOverwrites.cache) {
 						embed.addField(
-							"Changement de permissions",
+							`Changement de permissions pour ${newChannel.name}`,
 							`${oldChannel.permissionOverwrites.cache} => ${newChannel.permissionOverwrites.cache}`
 						);
 					}
@@ -68,10 +69,25 @@ const channelUpdate: DiscordEvent = {
 			} else if (oldChannel.isDirectory()) {
 				if (newChannel.isDirectory()) {
 					if (oldChannel.permissionOverwrites.cache !== newChannel.permissionOverwrites.cache) {
-						embed.addField(
-							"Changement de permissions",
-							`${oldChannel.permissionOverwrites.cache} => ${newChannel.permissionOverwrites.cache}`
-						);
+						oldChannel.permissionOverwrites.cache
+							.difference(newChannel.permissionOverwrites.cache)
+							.map(permissionOverwrite => {
+								embed.addField(
+									`Permissions accordées pour ${newChannel.name}`,
+									`${permissionOverwrite.allow
+										.toArray()
+										.map(permission => permissionToName(permission))
+										.join(", ")}`
+								);
+
+								embed.addField(
+									`Permissions refusées pour ${newChannel.name}`,
+									`${permissionOverwrite.deny
+										.toArray()
+										.map(permission => permissionToName(permission))
+										.join(", ")}`
+								);
+							});
 					}
 				} else {
 					embed.addField("Changement de type", `Dossier => ${getType((<GuildChannel>newChannel).type)}`);

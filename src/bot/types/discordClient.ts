@@ -51,7 +51,9 @@ export class DiscordPlayer {
 		if (!DiscordPlayer.player) {
 			DiscordPlayer.player = new Player(DiscordClient.getInstance(), {
 				leaveOnEmpty: true,
-				quality: "high"
+				quality: "high",
+				deafenOnJoin: false,
+				timeout: 0
 			});
 			DiscordPlayer.channels = new Collection();
 

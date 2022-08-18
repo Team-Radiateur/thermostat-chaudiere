@@ -1,4 +1,3 @@
-import { userMention } from "@discordjs/builders";
 import { GuildMember, User } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
@@ -17,7 +16,7 @@ const guildMemberAdd: DiscordEvent = {
 		if (channel && channel.isText()) {
 			const embed = prepareEmbed(DiscordClient.getInstance().user as User)
 				.setTitle("Valve thermostatique des ressources humaines")
-				.setDescription(`Arrivée sur le serveur de ${userMention(member.id)}`);
+				.setDescription(`Arrivée sur le serveur de ${member.user.tag}`);
 
 			await channel.send({ embeds: [embed] });
 		}
