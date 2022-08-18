@@ -46,11 +46,31 @@ const startBot = async (): Promise<boolean> => {
 			if (event.once) {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				client.once(event.name, (...args) => event.execute(...args));
+				client.once(event.name, (...args) => {
+					try {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						event.execute(...args);
+					} catch (error) {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						logger.error(error);
+					}
+				});
 			} else {
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				client.on(event.name, (...args) => event.execute(...args));
+				client.on(event.name, (...args) => {
+					try {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						event.execute(...args);
+					} catch (error) {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						logger.error(error);
+					}
+				});
 			}
 		}
 	} catch (error) {
