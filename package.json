@@ -38,7 +38,7 @@
 		"sodium": "3.0.2",
 		"string-progressbar": "1.0.4",
 		"utf-8-validate": "5.0.9",
-		"ytdl-core": "4.11.0",
+		"ytdl-core": "github:GreepTheSheep/node-ytdl-core",
 		"zlib-sync": "0.1.7"
 	},
 	"devDependencies": {
