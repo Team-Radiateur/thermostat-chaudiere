@@ -1,4 +1,4 @@
-import { GuildMember, User } from "discord.js";
+import { ChannelType, GuildMember, User } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
 import { DiscordClient } from "../types/discordClient";
@@ -13,7 +13,7 @@ const guildMemberAdd: DiscordEvent = {
 			env.bot.userUpdateLoggingChannelByGuild[guild.id]
 		);
 
-		if (channel && channel.isText()) {
+		if (channel && channel.type === ChannelType.GuildText) {
 			const embed = prepareEmbed(DiscordClient.getInstance().user as User)
 				.setTitle("Valve thermostatique des ressources humaines")
 				.setDescription(`Arrivée sur le serveur de ${member.user.tag}`);

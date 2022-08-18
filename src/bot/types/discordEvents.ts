@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, ConstantsEvents } from "discord.js";
+import { CommandInteraction, Events } from "discord.js";
 import { ValueOf } from "../../helpers/types";
 
 export type DiscordEvent = {
-	name: ValueOf<ConstantsEvents>;
+	name: ValueOf<Events>;
 	once: boolean;
 	execute: ((...data: never) => void) | ((...data: never) => Promise<void>);
 };

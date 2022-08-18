@@ -1,8 +1,8 @@
-import { Permissions } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { PermissionsBitField } from "discord.js";
+import { prepareEmbed, prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { prepareEmbed, prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 const clearList: boolean[] = [];
 
@@ -20,7 +20,10 @@ const clear: DiscordCommand = {
 		const people = Math.floor((channel.members.size / 100) * 51);
 		clearList.push(true);
 
-		if (clearList.length >= people || interaction.memberPermissions?.has([Permissions.FLAGS.ADMINISTRATOR])) {
+		if (
+			clearList.length >= people ||
+			interaction.memberPermissions?.has([PermissionsBitField.Flags.Administrator])
+		) {
 			if (queue.skip()) {
 				clearList.length = 0;
 				const embed = prepareEmbed(interaction.user)

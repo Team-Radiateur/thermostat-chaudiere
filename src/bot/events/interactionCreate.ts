@@ -1,10 +1,10 @@
 import { Interaction } from "discord.js";
 
 import { logger } from "../../helpers/logger";
+import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 
 import { DiscordClient } from "../types/discordClient";
 import { DiscordEvent } from "../types/discordEvents";
-import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 
 const interactionCreate: DiscordEvent = {
 	name: "interactionCreate",
@@ -12,7 +12,7 @@ const interactionCreate: DiscordEvent = {
 	execute: async (interaction: Interaction) => {
 		if (interaction.user.bot) return;
 
-		if (!interaction.isCommand()) return;
+		if (!interaction.isChatInputCommand()) return;
 
 		try {
 			// eslint-disable-next-line max-len

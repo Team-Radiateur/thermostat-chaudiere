@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
-import { CommandInteraction, Permissions, TextChannel } from "discord.js";
+import { CommandInteraction, PermissionsBitField, TextChannel } from "discord.js";
 import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
 import { DiscordCommand } from "../types/discordEvents";
 
@@ -24,7 +24,7 @@ const purgeMessages: DiscordCommand = {
 	execute: async (interaction: CommandInteraction) => {
 		const embed = prepareEmbed(interaction.user);
 
-		if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
+		if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
 			embed
 				.setTitle("Valve thermostatique générale")
 				.setDescription("Eh, oh ! Tu t'es pris pour qui là, Marseillais ?");
@@ -43,8 +43,8 @@ const purgeMessages: DiscordCommand = {
 			);
 		}
 
-		const numberToDelete = interaction.options.getInteger("nombre");
-		const user = interaction.options.getMentionable("personne");
+		const numberToDelete = interaction.options.get("nombre")?.value;
+		const user = interaction.options.getMember("personne");
 
 		// prettier-ignore
 		await channel.bulkDelete(
@@ -52,7 +52,7 @@ const purgeMessages: DiscordCommand = {
 				? (await channel.messages.fetch())
 					.filter(item => item.member === user)
 					.toJSON()
-					.filter((_, index) => (numberToDelete !== null ? index < numberToDelete : true))
+					.filter((_, index) => (numberToDelete !== undefined ? index < numberToDelete : true))
 				: (numberToDelete as number),
 			true
 		);

@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { EmbedFieldData, GuildMember } from "discord.js";
+import { EmbedField, GuildMember } from "discord.js";
 
 import { BannedWord } from "../../databases/sqlite/bannedWord";
 import { isAllowed, prepareEmbed, replyToInteraction } from "../../helpers/macros";
@@ -31,9 +31,10 @@ const showBannedWordsList: DiscordCommand = {
 				.setFields(
 					words.map(
 						(word, index) =>
-							<EmbedFieldData>{
+							<EmbedField>{
 								name: `${index + 1}`,
-								value: word.word
+								value: word.word,
+								inline: false
 							}
 					)
 				)

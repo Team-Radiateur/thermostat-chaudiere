@@ -1,5 +1,5 @@
 import { userMention } from "@discordjs/builders";
-import { GuildBan } from "discord.js";
+import { ChannelType, GuildBan } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
 import { DiscordClient } from "../types/discordClient";
@@ -14,7 +14,7 @@ const guildBanRemove: DiscordEvent = {
 			env.bot.userUpdateLoggingChannelByGuild[guild.id]
 		);
 
-		if (channel && channel.isText()) {
+		if (channel && channel.type === ChannelType.GuildText) {
 			const embed = prepareEmbed(ban.user).setTitle("Valve thermostatique administrative");
 
 			await channel.send({

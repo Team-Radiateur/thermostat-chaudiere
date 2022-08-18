@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import assert from "assert";
-import { Guild, GuildMember, Permissions, TextChannel } from "discord.js";
+import { Guild, GuildMember, PermissionsBitField, TextChannel } from "discord.js";
 import { logger } from "../../helpers/logger";
 
 import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
@@ -21,7 +21,7 @@ const deleteEveryMessageOfOnePerson: DiscordCommand = {
 		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique administrative");
 		const { guild } = interaction;
 
-		if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
+		if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
 			embed
 				.setTitle("Valve thermostatique générale")
 				.setDescription("Eh, oh ! Tu t'es pris pour qui là, Marseillais ?");
@@ -29,7 +29,7 @@ const deleteEveryMessageOfOnePerson: DiscordCommand = {
 			return await replyToInteraction(interaction, embed);
 		}
 
-		const user = interaction.options.getMentionable("personne");
+		const user = interaction.options.getMember("personne");
 
 		if (!user || !(user instanceof GuildMember)) {
 			logger.error("Erreur de récupération de l'utilisateur");

@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { prepareEmbed, prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { prepareEmbed, prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 const volume: DiscordCommand = {
 	data: new SlashCommandBuilder()
@@ -23,7 +23,7 @@ const volume: DiscordCommand = {
 		}
 
 		const { queue } = commandData;
-		const newVolume = interaction.options.getInteger("nouveau");
+		const newVolume = interaction.options.get("nouveau")?.value;
 		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique musicale");
 
 		if (!newVolume) {
@@ -33,7 +33,7 @@ const volume: DiscordCommand = {
 			);
 		}
 
-		if (queue.setVolume(newVolume)) {
+		if (queue.setVolume(newVolume as number)) {
 			return await replyToInteraction(
 				interaction,
 				embed.setDescription(`🔉 | Le volume a été mis à ${newVolume}%`)
