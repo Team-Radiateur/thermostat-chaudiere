@@ -31,7 +31,8 @@ export class DiscordClient {
 					GatewayIntentBits.GuildMessages,
 					GatewayIntentBits.GuildMessageReactions,
 					GatewayIntentBits.GuildMessageTyping,
-					GatewayIntentBits.GuildScheduledEvents
+					GatewayIntentBits.GuildScheduledEvents,
+					GatewayIntentBits.MessageContent
 				]
 			});
 
