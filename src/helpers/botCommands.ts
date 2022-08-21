@@ -7,7 +7,7 @@ import { string } from "./string";
 
 export const filter = async (message: Message) => {
 	if (!message.author.bot) {
-		logger.info(`${message.author.username}#${message.author.discriminator} a écrit "${message}"`);
+		logger.info(`${message.author.username}#${message.author.discriminator} a écrit "${message.content}"`);
 	}
 
 	if (

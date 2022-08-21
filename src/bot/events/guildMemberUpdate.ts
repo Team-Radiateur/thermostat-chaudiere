@@ -35,13 +35,11 @@ const guildMemberUpdate: DiscordEvent = {
 				embed.addFields([
 					{
 						name: "Rôles supprimés",
-						value: removedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join("\n")
-					}
-				]);
-				embed.addFields([
+						value: removedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join(", ")
+					},
 					{
 						name: "Rôles ajoutés",
-						value: addedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join("\n")
+						value: addedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join(", ")
 					}
 				]);
 			}
