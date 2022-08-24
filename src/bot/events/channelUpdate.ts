@@ -43,62 +43,48 @@ const channelUpdate: DiscordEvent = {
 			embed.setDescription(`Mise à jour du salon ${channelMention(oldChannel.id)}`);
 
 			if (oldChannel.name !== newChannel.name) {
-				embed.addFields([
-					{
-						name: "Changement de nom",
-						value: `${inlineCode(oldChannel.name)} => ${inlineCode(newChannel.name)}`
-					}
-				]);
+				embed.addFields({
+					name: "Changement de nom",
+					value: `${inlineCode(oldChannel.name)} => ${inlineCode(newChannel.name)}`
+				});
 			}
 
 			if (oldChannel.position !== newChannel.position) {
-				embed.addFields([
-					{
-						name: "Changement de position",
-						value: `${oldChannel.position} => ${newChannel.position}`
-					}
-				]);
+				embed.addFields({
+					name: "Changement de position",
+					value: `${oldChannel.position} => ${newChannel.position}`
+				});
 			}
 
 			if (oldChannel.type === ChannelType.GuildVoice) {
 				if (newChannel.type === ChannelType.GuildVoice) {
 					if ((oldChannel as VoiceChannel).rtcRegion !== (newChannel as VoiceChannel).rtcRegion) {
-						embed.addFields([
-							{
-								name: "Changement de région",
-								value: `${(<VoiceChannel>oldChannel).rtcRegion} => ${
-									(<VoiceChannel>newChannel).rtcRegion
-								}`
-							}
-						]);
+						embed.addFields({
+							name: "Changement de région",
+							value: `${(<VoiceChannel>oldChannel).rtcRegion} => ${(<VoiceChannel>newChannel).rtcRegion}`
+						});
 					}
 				} else {
-					embed.addFields([
-						{
-							name: "Changement de type",
-							value: `Vocal => ${getType(newChannel.type)}`
-						}
-					]);
+					embed.addFields({
+						name: "Changement de type",
+						value: `Vocal => ${getType(newChannel.type)}`
+					});
 				}
 			} else if (channel.type === ChannelType.GuildText) {
 				if (newChannel.type === ChannelType.GuildText) {
 					if (oldChannel.permissionOverwrites.cache !== newChannel.permissionOverwrites.cache) {
-						embed.addFields([
-							{
-								name: `Changement de permissions pour ${newChannel.name}`,
-								value: `${oldChannel.permissionOverwrites.cache
-									.toJSON()
-									.join(", ")} => ${newChannel.permissionOverwrites.cache.toJSON().join(", ")}`
-							}
-						]);
+						embed.addFields({
+							name: `Changement de permissions pour ${newChannel.name}`,
+							value: `${oldChannel.permissionOverwrites.cache
+								.toJSON()
+								.join(", ")} => ${newChannel.permissionOverwrites.cache.toJSON().join(", ")}`
+						});
 					}
 				} else {
-					embed.addFields([
-						{
-							name: "Changement de type",
-							value: `Texte => ${getType(newChannel.type)}`
-						}
-					]);
+					embed.addFields({
+						name: "Changement de type",
+						value: `Texte => ${getType(newChannel.type)}`
+					});
 				}
 			} else if (oldChannel.type === ChannelType.GuildCategory) {
 				if (newChannel.type === ChannelType.GuildCategory) {
@@ -106,17 +92,14 @@ const channelUpdate: DiscordEvent = {
 						oldChannel.permissionOverwrites.cache
 							.difference(newChannel.permissionOverwrites.cache)
 							.map(permissionOverwrite => {
-								embed.addFields([
+								embed.addFields(
 									{
 										name: `Permissions accordées pour ${newChannel.name}`,
 										value: `${permissionOverwrite.allow
 											.toArray()
 											.map(permission => permissionToName(permission))
 											.join(", ")}`
-									}
-								]);
-
-								embed.addFields([
+									},
 									{
 										name: `Permissions refusées pour ${newChannel.name}`,
 										value: `${permissionOverwrite.deny
@@ -124,16 +107,14 @@ const channelUpdate: DiscordEvent = {
 											.map(permission => permissionToName(permission))
 											.join(", ")}`
 									}
-								]);
+								);
 							});
 					}
 				} else {
-					embed.addFields([
-						{
-							name: "Changement de type",
-							value: `Dossier => ${getType((<GuildChannel>newChannel).type)}`
-						}
-					]);
+					embed.addFields({
+						name: "Changement de type",
+						value: `Dossier => ${getType((<GuildChannel>newChannel).type)}`
+					});
 				}
 			}
 

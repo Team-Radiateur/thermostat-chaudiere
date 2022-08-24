@@ -20,19 +20,17 @@ const guildMemberUpdate: DiscordEvent = {
 				.setDescription(`${newMember.user.tag} a mis à jour des informations.`);
 
 			if (oldMember.nickname !== newMember.nickname) {
-				embed.addFields([
-					{
-						name: "Surnom",
-						value: `${oldMember.nickname} => ${newMember.nickname}`
-					}
-				]);
+				embed.addFields({
+					name: "Surnom",
+					value: `${oldMember.nickname} => ${newMember.nickname}`
+				});
 			}
 
 			if (oldMember.roles.cache.size !== newMember.roles.cache.size) {
 				const removedRoles = oldMember.roles.cache.filter(role => !newMember.roles.cache.has(role.id));
 				const addedRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
 
-				embed.addFields([
+				embed.addFields(
 					{
 						name: "Rôles supprimés",
 						value: removedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join(", ")
@@ -41,37 +39,31 @@ const guildMemberUpdate: DiscordEvent = {
 						name: "Rôles ajoutés",
 						value: addedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join(", ")
 					}
-				]);
+				);
 			}
 
 			if (oldMember.user.username !== newMember.user.username) {
-				embed.addFields([
-					{
-						name: "Nom d'utilisateur",
-						value: `${oldMember.user.username} => ${newMember.user.username}`
-					}
-				]);
+				embed.addFields({
+					name: "Nom d'utilisateur",
+					value: `${oldMember.user.username} => ${newMember.user.username}`
+				});
 			}
 
 			if (oldMember.user.discriminator !== newMember.user.discriminator) {
-				embed.addFields([
-					{
-						name: "Discriminant",
-						value: `${oldMember.user.tag} => ${newMember.user.tag}`
-					}
-				]);
+				embed.addFields({
+					name: "Discriminant",
+					value: `${oldMember.user.tag} => ${newMember.user.tag}`
+				});
 			}
 
 			if (oldMember.user.avatarURL() !== newMember.user.avatarURL()) {
-				embed.addFields([
-					{
-						name: "Avatar",
-						value: `${hyperlink("précédent", oldMember.user.avatarURL() || "")} => ${hyperlink(
-							"nouveau",
-							newMember.user.avatarURL() || ""
-						)}`
-					}
-				]);
+				embed.addFields({
+					name: "Avatar",
+					value: `${hyperlink("précédent", oldMember.user.avatarURL() || "")} => ${hyperlink(
+						"nouveau",
+						newMember.user.avatarURL() || ""
+					)}`
+				});
 			}
 
 			await channel.send({ embeds: [embed] });

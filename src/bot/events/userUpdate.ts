@@ -33,15 +33,13 @@ const userUpdate: DiscordEvent = {
 			.setFooter({ text: `ID de l'utilisateur: ${newUser.id}` });
 
 		if (oldUser.displayAvatarURL() !== newUser.displayAvatarURL()) {
-			embed.addFields([
-				{
-					name: "Avatar",
-					value: `${hyperlink("[précédent]", oldUser.displayAvatarURL())} => ${hyperlink(
-						"[nouveau]",
-						newUser.displayAvatarURL()
-					)}`
-				}
-			]);
+			embed.addFields({
+				name: "Avatar",
+				value: `${hyperlink("[précédent]", oldUser.displayAvatarURL())} => ${hyperlink(
+					"[nouveau]",
+					newUser.displayAvatarURL()
+				)}`
+			});
 		} else if (oldUser.username !== newUser.username) {
 			embed.addFields({
 				name: "Nouveau pseudo",
@@ -53,7 +51,7 @@ const userUpdate: DiscordEvent = {
 				value: `${oldUser.discriminator} => ${newUser.discriminator}`
 			});
 		} else if (oldUser.tag !== newUser.tag) {
-			embed.addFields([{ name: "Nouveau tag", value: newUser.tag }]);
+			embed.addFields({ name: "Nouveau tag", value: newUser.tag });
 		} else {
 			return;
 		}
