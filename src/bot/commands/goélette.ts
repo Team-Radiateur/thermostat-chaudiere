@@ -1,5 +1,5 @@
-import { roleMention, SlashCommandBuilder, userMention } from "@discordjs/builders";
-import { Guild, GuildMember } from "discord.js";
+import { SlashCommandBuilder, userMention } from "@discordjs/builders";
+import { CommandInteractionOptionResolver, Guild, GuildMember } from "discord.js";
 
 import { prepareEmbed } from "../../helpers/macros";
 import { DiscordCommand } from "../types/discordEvents";
@@ -17,11 +17,11 @@ const goelette: DiscordCommand = {
 	execute: async interaction => {
 		const embed = prepareEmbed(interaction.user).setTitle("Valve thermostatique textuelle");
 		const guildMember =
-			interaction.options.getUser("personne") ||
+			(interaction.options as CommandInteractionOptionResolver).getMentionable("personne") ||
 			((interaction.guild as Guild).members.cache.random() as GuildMember);
 
 		return await interaction.reply({
-			content: guildMember instanceof GuildMember ? userMention(guildMember.id) : roleMention(guildMember.id),
+			content: userMention((<GuildMember>guildMember).id),
 			embeds: [embed.setDescription("Goélette au rapport !")]
 		});
 	}
