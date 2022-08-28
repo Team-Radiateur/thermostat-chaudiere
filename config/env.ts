@@ -4,6 +4,14 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const guilds = (process.env.GUILDS || "").split(",").filter(guild => guild !== "");
+const guildReducer = (accumulator: { [guild: string]: string }, channelOrUserByGuild: string) => {
+	const [guild, channelOrUser] = channelOrUserByGuild.split(":");
+	if (guild && channelOrUser && guilds.find(guildId => guildId === guild)) {
+		accumulator[guild] = channelOrUser;
+	}
+
+	return accumulator;
+};
 
 export const env = {
 	env: process.env.ENV || process.env.NODE_ENV || "local", // ["local", "dev", "preproduction", "production"]
@@ -35,25 +43,15 @@ export const env = {
 		voiceLoggingChannelByGuild: (process.env.VOICE_LOGGING_CHANNEL_BY_GUILD || "")
 			.split(",")
 			.filter(channel => channel !== "")
-			.reduce((accumulator, channelGuild) => {
-				const [guild, channel] = channelGuild.split(":");
-				if (guild && channel && guilds.find(guildId => guildId === guild)) {
-					accumulator[guild] = channel;
-				}
-
-				return accumulator;
-			}, {} as { [guild: string]: string }),
+			.reduce(guildReducer, {} as { [guild: string]: string }),
 		userUpdateLoggingChannelByGuild: (process.env.USER_UPDATE_LOGGING_CHANNEL_BY_GUILD || "")
 			.split(",")
 			.filter(channel => channel !== "")
-			.reduce((accumulator, channelGuild) => {
-				const [guild, channel] = channelGuild.split(":");
-				if (guild && channel && guilds.find(guildId => guildId === guild)) {
-					accumulator[guild] = channel;
-				}
-
-				return accumulator;
-			}, {} as { [guild: string]: string }),
+			.reduce(guildReducer, {} as { [guild: string]: string }),
+		roleToTagOnUserRemove: (process.env.ROLE_TO_TAG_ON_USER_REMOVE || "")
+			.split(",")
+			.filter(channel => channel !== "")
+			.reduce(guildReducer, {} as { [guild: string]: string }),
 		musicChannels: (process.env.MUSIC_CHANNELS || "").split(",").filter(channel => channel !== "")
 	},
 	external: {

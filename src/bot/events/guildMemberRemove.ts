@@ -1,3 +1,4 @@
+import { roleMention } from "@discordjs/builders";
 import { randomInt } from "crypto";
 import { ChannelType, GuildMember } from "discord.js";
 import { env } from "../../../config/env";
@@ -34,11 +35,12 @@ const guildMemberRemove: DiscordEvent = {
 				case 100:
 					description += " Enfin un connard de moins.";
 					break;
-				default:
-					break;
 			}
 
-			await channel.send({ embeds: [embed.setDescription(description)] });
+			await channel.send({
+				content: roleMention(env.bot.roleToTagOnUserRemove[guild.id]),
+				embeds: [embed.setDescription(description)]
+			});
 		}
 	}
 };
