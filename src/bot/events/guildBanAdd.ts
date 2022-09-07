@@ -1,3 +1,4 @@
+import { roleMention } from "@discordjs/builders";
 import { ChannelType, GuildBan, User } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
@@ -18,7 +19,10 @@ const guildBanAdd: DiscordEvent = {
 				.setTitle("Valve thermostatique administrative")
 				.setDescription(`${ban.user.tag} a été banni du serveur.`);
 
-			await channel.send({ embeds: [embed] });
+			await channel.send({
+				content: roleMention(env.bot.roleToTagOnUserRemove[guild.id]),
+				embeds: [embed]
+			});
 		}
 	}
 };

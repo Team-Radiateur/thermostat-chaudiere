@@ -1,3 +1,4 @@
+import { roleMention } from "@discordjs/builders";
 import { ChannelType, GuildChannel, User } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
@@ -18,7 +19,10 @@ const channelDelete: DiscordEvent = {
 				.setTitle("Valve thermostatique administrative")
 				.setDescription(`Le salon ${deletedChannel.name} a été supprimé.`);
 
-			await channel.send({ embeds: [embed] });
+			await channel.send({
+				content: roleMention(env.bot.roleToTagOnUserRemove[guild.id]),
+				embeds: [embed]
+			});
 		}
 	}
 };

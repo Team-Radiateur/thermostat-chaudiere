@@ -1,4 +1,4 @@
-import { userMention } from "@discordjs/builders";
+import { roleMention, userMention } from "@discordjs/builders";
 import { ChannelType, GuildBan } from "discord.js";
 import { env } from "../../../config/env";
 import { prepareEmbed } from "../../helpers/macros";
@@ -18,6 +18,7 @@ const guildBanRemove: DiscordEvent = {
 			const embed = prepareEmbed(ban.user).setTitle("Valve thermostatique administrative");
 
 			await channel.send({
+				content: roleMention(env.bot.roleToTagOnUserRemove[guild.id]),
 				embeds: [embed.setDescription(`Suppression du bannissement de ${userMention(ban.user.id)}`)]
 			});
 		}
