@@ -1,6 +1,6 @@
 import { Locale } from "discord-api-types/v10";
 import * as fs from "fs/promises";
-import { ColoredConsoleSink, LogEvent, LogEventLevel, LoggerConfiguration, Sink } from "structured-log";
+import { ColoredConsoleSink, LogEvent, LogEventLevel, LoggerConfiguration, Sink } from "serilogger";
 
 const DIR_PATH = `${__dirname}/../../../logs`;
 
