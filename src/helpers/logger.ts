@@ -1,68 +1,102 @@
-import { NextFunction, Request, Response } from "express";
+import { Locale } from "discord-api-types/v10";
+import * as fs from "fs/promises";
+import { ColoredConsoleSink, LogEvent, LogEventLevel, LoggerConfiguration, Sink } from "structured-log";
 
-const colors = {
-	bright: "\x1b[1m",
-	dim: "\x1b[2m",
-	underscore: "\x1b[4m",
-	blink: "\x1b[5m",
-	reverse: "\x1b[7m",
-	hidden: "\x1b[8m",
-	black: "\x1b[30m",
-	red: "\x1b[31m",
-	green: "\x1b[32m",
-	yellow: "\x1b[33m",
-	blue: "\x1b[34m",
-	magenta: "\x1b[35m",
-	cyan: "\x1b[36m",
-	white: "\x1b[37m",
-	bgblack: "\x1b[40m",
-	bgred: "\x1b[41m",
-	bggreen: "\x1b[42m",
-	bgyellow: "\x1b[43m",
-	bgblue: "\x1b[44m",
-	bgmagenta: "\x1b[45m",
-	bgcyan: "\x1b[46m",
-	bgwhite: "\x1b[47m",
-	reset: "\x1b[0m"
-};
+const DIR_PATH = `${__dirname}/../../../logs`;
 
-type colorName = keyof typeof colors;
+class FileSink implements Sink {
+	#name: string;
+	readonly #level: LogEventLevel;
+	readonly #dirpath: string;
 
-const getColorCodeByName = (name: colorName): string => {
-	const color = colors[name];
-	return color || "\x1b[0m";
-};
+	constructor(
+		name = new Date().toLocaleDateString(Locale.French, {
+			weekday: "long",
+			year: "numeric",
+			day: "numeric",
+			month: "long"
+		}),
+		level = LogEventLevel.verbose,
+		dirpath = DIR_PATH
+	) {
+		this.#name = name;
+		this.#level = level;
+		this.#dirpath = dirpath;
+
+		fs.access(dirpath)
+			.catch(async () => {
+				await fs.mkdir(dirpath);
+			})
+			.finally(() => {
+				fs.access(this.filePath()).catch(async () => {
+					await fs.writeFile(this.filePath(), "");
+				});
+			});
+	}
+
+	public filePath(): string {
+		const extension = LogEventLevel[this.#level];
+		return `${this.#dirpath}/${this.#name}-${extension}.log`;
+	}
+
+	async emit(events: LogEvent[]): Promise<void> {
+		if (this.#level === LogEventLevel.off) return;
+
+		if (/[a-z]+\s\d{1,2}\s[a-z]+\s\d{4}/.test(this.#name)) {
+			const potentialNewFileName = new Date().toLocaleDateString(Locale.French, {
+				weekday: "long",
+				year: "numeric",
+				day: "numeric",
+				month: "long"
+			});
+
+			if (potentialNewFileName !== this.#name) {
+				this.#name = potentialNewFileName;
+
+				await fs.writeFile(this.filePath(), "");
+			}
+		}
+
+		for (const event of events) {
+			if (this.#level === LogEventLevel.verbose || this.#level === event.level) {
+				await fs.appendFile(
+					this.filePath(),
+					`[${LogEventLevel[event.level]}] ${event.messageTemplate.render()}\n`
+				);
+			}
+		}
+	}
+
+	flush(): Promise<undefined> {
+		return Promise.resolve(undefined);
+	}
+}
+
+const log = new LoggerConfiguration()
+	.minLevel(LogEventLevel.verbose)
+	.writeTo(new ColoredConsoleSink())
+	.writeTo(new FileSink())
+	.writeTo(new FileSink(undefined, LogEventLevel.error))
+	.create();
 
 function readableNow() {
 	return `${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}`;
 }
 
-function loggerDebug(text: string, ...args: unknown[]): void {
-	console.log(
-		`${readableNow()} 🔧 ${getColorCodeByName("blue")}Debug${getColorCodeByName("reset")}: ${text}`,
-		...args
-	);
+function loggerDebug(text: string): void {
+	log.debug(`${readableNow()} | ${text}`);
 }
 
-function loggerInfo(text: string, ...args: unknown[]): void {
-	console.log(
-		`${readableNow()} 💡 ${getColorCodeByName("green")}Info${getColorCodeByName("reset")}: ${text}`,
-		...args
-	);
+function loggerInfo(text: string): void {
+	log.info(`${readableNow()} | ${text}`);
 }
 
-function loggerWarning(text: string, ...args: unknown[]): void {
-	console.log(
-		`${readableNow()} ⚠️ ${getColorCodeByName("yellow")}Warning${getColorCodeByName("reset")}: ${text}`,
-		...args
-	);
+function loggerWarning(text: string): void {
+	log.warn(`${readableNow()} | ${text}`);
 }
 
-function loggerError(text: string, ...args: unknown[]): void {
-	console.log(
-		`${readableNow()} ❌ ${getColorCodeByName("red")}Error${getColorCodeByName("reset")}: ${text}`,
-		...args
-	);
+function loggerError(text: string): void {
+	log.error(`${readableNow()} ${text}`);
 }
 
 export const logger = {
@@ -70,9 +104,4 @@ export const logger = {
 	debug: loggerDebug,
 	warning: loggerWarning,
 	error: loggerError
-};
-
-export const logRequest = (req: Request, _res: Response, next: NextFunction): void => {
-	logger.info(`new request ${req.method} ${req.path} from ${req.ip}`);
-	next();
 };

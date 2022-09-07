@@ -76,7 +76,7 @@ const startBot = async (): Promise<boolean> => {
 	} catch (error) {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		logger.error(JSON.stringify(error), error.stack);
+		logger.error(error.message);
 	}
 
 	await client.login(env.bot.token);
