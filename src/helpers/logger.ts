@@ -26,7 +26,7 @@ class FileSink implements Sink {
 	}
 
 	async #manageFile(): Promise<void> {
-		if (/\d{4}-|d{2}-\d{2}/.test(this.#name)) {
+		if (/\d{4}-\d{2}-\d{2}/.test(this.#name)) {
 			const [potentialNewFileName] = new Date().toISOString().split("T");
 
 			if (potentialNewFileName !== this.#name) {
