@@ -30,29 +30,31 @@ const guildMemberUpdate: DiscordEvent = {
 				const removedRoles = oldMember.roles.cache.filter(role => !newMember.roles.cache.has(role.id));
 				const addedRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
 
-				embed.addFields(
-					{
-						name: "Rôles supprimés",
-						value: removedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join(", ")
-					},
-					{
-						name: "Rôles ajoutés",
-						value: addedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join(", ")
-					}
-				);
+				embed.addFields({
+					name: "Rôles supprimés",
+					value: removedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join(", "),
+					inline: false
+				});
+				embed.addFields({
+					name: "Rôles ajoutés",
+					value: addedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join(", "),
+					inline: false
+				});
 			}
 
 			if (oldMember.user.username !== newMember.user.username) {
 				embed.addFields({
 					name: "Nom d'utilisateur",
-					value: `${oldMember.user.username} => ${newMember.user.username}`
+					value: `${oldMember.user.username} => ${newMember.user.username}`,
+					inline: false
 				});
 			}
 
 			if (oldMember.user.discriminator !== newMember.user.discriminator) {
 				embed.addFields({
 					name: "Discriminant",
-					value: `${oldMember.user.tag} => ${newMember.user.tag}`
+					value: `${oldMember.user.tag} => ${newMember.user.tag}`,
+					inline: false
 				});
 			}
 
@@ -62,7 +64,8 @@ const guildMemberUpdate: DiscordEvent = {
 					value: `${hyperlink("précédent", oldMember.user.avatarURL() || "")} => ${hyperlink(
 						"nouveau",
 						newMember.user.avatarURL() || ""
-					)}`
+					)}`,
+					inline: false
 				});
 			}
 

@@ -14,15 +14,18 @@ const info: DiscordCommand = {
 			.addFields([
 				{
 					name: "🌡 | Température",
-					value: `${temperature}°C`
+					value: `${temperature}°C`,
+					inline: false
 				},
 				{
 					name: "👥 | Nombre de personnes sur le serveur :",
-					value: `${interaction.guild?.memberCount} personnes`
+					value: `${interaction.guild?.memberCount} personnes`,
+					inline: false
 				},
 				{
 					name: "🔋 | Nombre de personnes connectées",
-					value: `${connectedPeople?.size ?? 0} personnes`
+					value: `${connectedPeople?.size ?? 0} personnes`,
+					inline: false
 				}
 			]);
 

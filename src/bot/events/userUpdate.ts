@@ -38,20 +38,23 @@ const userUpdate: DiscordEvent = {
 				value: `${hyperlink("[précédent]", oldUser.displayAvatarURL())} => ${hyperlink(
 					"[nouveau]",
 					newUser.displayAvatarURL()
-				)}`
+				)}`,
+				inline: false
 			});
 		} else if (oldUser.username !== newUser.username) {
 			embed.addFields({
 				name: "Nouveau pseudo",
-				value: `${oldUser.username} => ${newUser.username}`
+				value: `${oldUser.username} => ${newUser.username}`,
+				inline: false
 			});
 		} else if (oldUser.discriminator !== newUser.discriminator) {
 			embed.addFields({
 				name: "Nouveau discriminant",
-				value: `${oldUser.discriminator} => ${newUser.discriminator}`
+				value: `${oldUser.discriminator} => ${newUser.discriminator}`,
+				inline: false
 			});
 		} else if (oldUser.tag !== newUser.tag) {
-			embed.addFields({ name: "Nouveau tag", value: newUser.tag });
+			embed.addFields({ name: "Nouveau tag", value: newUser.tag, inline: false });
 		} else {
 			return;
 		}
