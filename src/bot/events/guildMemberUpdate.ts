@@ -30,14 +30,14 @@ const guildMemberUpdate: DiscordEvent = {
 				const removedRoles = oldMember.roles.cache.filter(role => !newMember.roles.cache.has(role.id));
 				const addedRoles = newMember.roles.cache.filter(role => !oldMember.roles.cache.has(role.id));
 
-				if (removedRoles) {
+				if (removedRoles.size) {
 					embed.addFields({
 						name: "Rôles supprimés",
 						value: removedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join(", "),
 						inline: false
 					});
 				}
-				if (addedRoles) {
+				if (addedRoles.size) {
 					embed.addFields({
 						name: "Rôles ajoutés",
 						value: addedRoles.map(role => `${role.name} (${roleMention(role.id)})`).join(", "),
