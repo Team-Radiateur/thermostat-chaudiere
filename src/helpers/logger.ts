@@ -1,6 +1,7 @@
-import { Locale } from "discord-api-types/v10";
 import * as fs from "fs/promises";
 import { ColoredConsoleSink, LogEvent, LogEventLevel, LoggerConfiguration, Sink } from "serilogger";
+
+import { one_Go } from "./file";
 
 const DIR_PATH = `${__dirname}/../../../logs`;
 
@@ -9,58 +10,61 @@ class FileSink implements Sink {
 	readonly #level: LogEventLevel;
 	readonly #dirpath: string;
 
-	constructor(
-		name = new Date().toLocaleDateString(Locale.French, {
-			weekday: "long",
-			year: "numeric",
-			day: "numeric",
-			month: "long"
-		}),
-		level = LogEventLevel.verbose,
-		dirpath = DIR_PATH
-	) {
+	constructor(name = new Date().toISOString().split("T")[0], level = LogEventLevel.verbose, dirpath = DIR_PATH) {
 		this.#name = name;
 		this.#level = level;
 		this.#dirpath = dirpath;
-
-		fs.access(dirpath)
-			.catch(async () => {
-				await fs.mkdir(dirpath);
-			})
-			.finally(() => {
-				fs.access(this.filePath()).catch(async () => {
-					await fs.writeFile(this.filePath(), "");
-				});
-			});
 	}
 
-	public filePath(): string {
+	get fullname(): string {
 		const extension = LogEventLevel[this.#level];
-		return `${this.#dirpath}/${this.#name}-${extension}.log`;
+		return `${this.#name}-${extension}`;
+	}
+
+	get filePath(): string {
+		return `${this.#dirpath}/${this.fullname}.log`;
+	}
+
+	async #manageFile(): Promise<void> {
+		if (/\d{4}-|d{2}-\d{2}/.test(this.#name)) {
+			const [potentialNewFileName] = new Date().toISOString().split("T");
+
+			if (potentialNewFileName !== this.#name) {
+				this.#name = potentialNewFileName;
+			}
+		}
+
+		try {
+			await fs.access(this.filePath);
+		} catch (error) {
+			await fs.writeFile(this.filePath, "", { encoding: "utf-8" });
+		}
+
+		const fileStats = await fs.stat(this.filePath);
+
+		if (fileStats.size > one_Go) {
+			const files = await fs.readdir(this.#dirpath);
+			const todayFilesNumber = files.filter(name => name.includes(this.fullname)).length;
+
+			try {
+				await fs.rename(this.filePath, `${this.filePath}.${todayFilesNumber}`);
+			} catch (_error) {
+				// File already renamed, we don't care
+			} finally {
+				await fs.writeFile(this.filePath, "", { encoding: "utf-8" });
+			}
+		}
 	}
 
 	async emit(events: LogEvent[]): Promise<void> {
 		if (this.#level === LogEventLevel.off) return;
 
-		if (/[a-z]+\s\d{1,2}\s[a-z]+\s\d{4}/.test(this.#name)) {
-			const potentialNewFileName = new Date().toLocaleDateString(Locale.French, {
-				weekday: "long",
-				year: "numeric",
-				day: "numeric",
-				month: "long"
-			});
-
-			if (potentialNewFileName !== this.#name) {
-				this.#name = potentialNewFileName;
-
-				await fs.writeFile(this.filePath(), "");
-			}
-		}
+		await this.#manageFile();
 
 		for (const event of events) {
 			if (this.#level === LogEventLevel.verbose || this.#level === event.level) {
 				await fs.appendFile(
-					this.filePath(),
+					this.filePath,
 					`[${LogEventLevel[event.level]}] ${event.messageTemplate.render()}\n`
 				);
 			}
