@@ -76,11 +76,12 @@ const channelUpdate: DiscordEvent = {
 				}
 			} else if (channel.type === ChannelType.GuildText) {
 				if (newChannel.type === ChannelType.GuildText) {
-					if (oldChannel.permissionOverwrites.cache !== newChannel.permissionOverwrites.cache) {
+					if (oldChannel.permissionOverwrites.cache.difference(newChannel.permissionOverwrites.cache).size) {
 						embed.addFields({
 							name: `Changement de permissions pour ${newChannel.name}`,
 							value: `${oldChannel.permissionOverwrites.cache
 								.toJSON()
+								.map(obj => JSON.stringify(obj))
 								.join(", ")} => ${newChannel.permissionOverwrites.cache.toJSON().join(", ")}`,
 							inline: false
 						});
@@ -94,7 +95,7 @@ const channelUpdate: DiscordEvent = {
 				}
 			} else if (oldChannel.type === ChannelType.GuildCategory) {
 				if (newChannel.type === ChannelType.GuildCategory) {
-					if (oldChannel.permissionOverwrites.cache !== newChannel.permissionOverwrites.cache) {
+					if (oldChannel.permissionOverwrites.cache.difference(newChannel.permissionOverwrites.cache).size) {
 						oldChannel.permissionOverwrites.cache
 							.difference(newChannel.permissionOverwrites.cache)
 							.map(permissionOverwrite => {
@@ -103,16 +104,13 @@ const channelUpdate: DiscordEvent = {
 										name: `Permissions accordées pour ${newChannel.name}`,
 										value: `${permissionOverwrite.allow
 											.toArray()
-											.map(permission => permissionToName(permission))
+											.map(permissionToName)
 											.join(", ")}`,
 										inline: false
 									},
 									{
 										name: `Permissions refusées pour ${newChannel.name}`,
-										value: `${permissionOverwrite.deny
-											.toArray()
-											.map(permission => permissionToName(permission))
-											.join(", ")}`,
+										value: `${permissionOverwrite.deny.toArray().map(permissionToName).join(", ")}`,
 										inline: false
 									}
 								);
