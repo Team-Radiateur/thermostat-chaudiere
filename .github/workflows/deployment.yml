@@ -20,4 +20,6 @@ jobs:
           PTERODACTYL_API_KEY: ${{ secrets.PTERODACTYL_API_KEY }}
           PTERODACTYL_API_URL: ${{ secrets.PTERODACTYL_API_URL }}
           PTERODACTYL_SERVER_ID: ${{ secrets.PTERODACTYL_SERVER_ID }}
-        run: node src/index.js
+        run: |
+          npm install
+          node src/index.js
