@@ -1,0 +1,21 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: Team-Radiateur/bot-auto-deploy
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 18.x
+      - run: npm install
+      - env:
+          PTERODACTYL_API_KEY: ${{ secrets.PTERODACTYL_API_KEY }}
+          PTERODACTYL_API_URL: ${{ secrets.PTERODACTYL_API_URL }}
+          PTERODACTYL_SERVER_ID: ${{ secrets.PTERODACTYL_SERVER_ID }}
+      - run: node src/index.js
