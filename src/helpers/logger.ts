@@ -1,19 +1,31 @@
-import * as fs from "fs/promises";
+import * as fs from "fs";
+import * as fsp from "fs/promises";
 import { ColoredConsoleSink, LogEvent, LogEventLevel, LoggerConfiguration, Sink } from "serilogger";
 
-import { one_Go } from "./file";
+import { one_MB } from "./fileSize";
 
 const DIR_PATH = `${__dirname}/../../../logs`;
+
+export interface FileSinkOptions {
+	fileName?: string;
+	outputDir?: string;
+	logEventLevel?: LogEventLevel;
+	maxFileSize?: number;
+}
 
 class FileSink implements Sink {
 	#name: string;
 	readonly #level: LogEventLevel;
-	readonly #dirpath: string;
+	readonly #outputDir: string;
+	readonly #maxFileSize: number;
+	readonly #content: string[];
 
-	constructor(name = new Date().toISOString().split("T")[0], level = LogEventLevel.verbose, dirpath = DIR_PATH) {
-		this.#name = name;
-		this.#level = level;
-		this.#dirpath = dirpath;
+	constructor({ fileName, outputDir, logEventLevel, maxFileSize }: FileSinkOptions) {
+		this.#name = fileName || new Date().toISOString().split("T")[0];
+		this.#level = logEventLevel || LogEventLevel.verbose;
+		this.#outputDir = outputDir || "./logs";
+		this.#maxFileSize = maxFileSize || one_MB * 10;
+		this.#content = [];
 	}
 
 	get fullname(): string {
@@ -22,10 +34,43 @@ class FileSink implements Sink {
 	}
 
 	get filePath(): string {
-		return `${this.#dirpath}/${this.fullname}.log`;
+		return `${this.#outputDir}/${this.fullname}.log`;
 	}
 
-	async #manageFile(): Promise<void> {
+	async #manageFiles(): Promise<void> {
+		this.#renameInCaseDateChanged();
+		await this.#checkFileExists();
+		const fileStats = await fsp.stat(this.filePath);
+
+		if (fileStats.size > this.#maxFileSize) {
+			await this.#rollFile();
+		}
+	}
+
+	#countNumberOfLogFile(files: string[]): number {
+		return files.filter(name => name.includes(this.fullname)).length;
+	}
+
+	async #rollFile(): Promise<void> {
+		try {
+			const files = await fsp.readdir(this.#outputDir);
+			const todayFilesNumber = this.#countNumberOfLogFile(files);
+
+			await fsp.rename(this.filePath, `${this.filePath}.${todayFilesNumber}`);
+		} catch (_error) {
+			// File already renamed, we don't care
+		} finally {
+			await this.#checkFileExists();
+		}
+	}
+
+	async #checkFileExists() {
+		if (!fs.existsSync(this.filePath)) {
+			await fsp.writeFile(this.filePath, "", { encoding: "utf-8" });
+		}
+	}
+
+	#renameInCaseDateChanged() {
 		if (/\d{4}-\d{2}-\d{2}/.test(this.#name)) {
 			const [potentialNewFileName] = new Date().toISOString().split("T");
 
@@ -33,54 +78,44 @@ class FileSink implements Sink {
 				this.#name = potentialNewFileName;
 			}
 		}
-
-		try {
-			await fs.access(this.filePath);
-		} catch (error) {
-			await fs.writeFile(this.filePath, "", { encoding: "utf-8" });
-		}
-
-		const fileStats = await fs.stat(this.filePath);
-
-		if (fileStats.size > one_Go) {
-			const files = await fs.readdir(this.#dirpath);
-			const todayFilesNumber = files.filter(name => name.includes(this.fullname)).length;
-
-			try {
-				await fs.rename(this.filePath, `${this.filePath}.${todayFilesNumber}`);
-			} catch (_error) {
-				// File already renamed, we don't care
-			} finally {
-				await fs.writeFile(this.filePath, "", { encoding: "utf-8" });
-			}
-		}
 	}
 
 	async emit(events: LogEvent[]): Promise<void> {
 		if (this.#level === LogEventLevel.off) return;
 
-		await this.#manageFile();
+		await this.#manageFiles();
 
 		for (const event of events) {
 			if (this.#level === LogEventLevel.verbose || this.#level === event.level) {
-				await fs.appendFile(
-					this.filePath,
-					`[${LogEventLevel[event.level]}] ${event.messageTemplate.render()}\n`
-				);
+				this.#content.push(`[${LogEventLevel[event.level]}] ${event.messageTemplate.render()}`);
 			}
 		}
+
+		await this.flush();
 	}
 
-	flush(): Promise<undefined> {
-		return Promise.resolve(undefined);
+	async flush(): Promise<void> {
+		await fsp.appendFile(this.filePath, this.#content.join("\n"), { encoding: "utf-8" });
+
+		this.#content.length = 0;
 	}
 }
 
 const log = new LoggerConfiguration()
 	.minLevel(LogEventLevel.verbose)
 	.writeTo(new ColoredConsoleSink())
-	.writeTo(new FileSink())
-	.writeTo(new FileSink(undefined, LogEventLevel.error))
+	.writeTo(
+		new FileSink({
+			outputDir: DIR_PATH,
+			logEventLevel: LogEventLevel.verbose
+		})
+	)
+	.writeTo(
+		new FileSink({
+			outputDir: DIR_PATH,
+			logEventLevel: LogEventLevel.error
+		})
+	)
 	.create();
 
 function readableNow() {
