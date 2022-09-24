@@ -102,7 +102,6 @@ class FileSink implements Sink {
 }
 
 const log = new LoggerConfiguration()
-	.minLevel(LogEventLevel.verbose)
 	.writeTo(new ColoredConsoleSink())
 	.writeTo(
 		new FileSink({

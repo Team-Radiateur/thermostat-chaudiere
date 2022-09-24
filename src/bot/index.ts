@@ -36,7 +36,7 @@ const startBot = async (): Promise<boolean> => {
 
 			logger.info("Successfully reloaded application (/) commands.");
 		} catch (error) {
-			console.error(error);
+			logger.error(`An error occurred while reloading the commands:\n${(<Error>error).message}`);
 		}
 
 		for (const file of eventFiles) {
