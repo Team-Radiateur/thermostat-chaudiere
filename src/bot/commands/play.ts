@@ -1,5 +1,6 @@
 import { bold, hyperlink, SlashCommandBuilder } from "@discordjs/builders";
 import { Song } from "discord-music-player";
+import { logger } from "../../helpers/logger";
 import { prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
@@ -42,7 +43,7 @@ const play: DiscordCommand = {
 			try {
 				await queue.join(channel);
 			} catch (error) {
-				console.log(error);
+				logger.error(`Une erreur est survenue lors de la connexion au canal:\n${(<Error>error).message}`);
 
 				return await replyToInteraction(
 					interaction,
@@ -62,8 +63,12 @@ const play: DiscordCommand = {
 					? await queue.play(uriValue)
 					: await queue.playlist(uriValue);
 			} catch (error) {
+				logger.error(
+					`Une erreur est survenue lors du chargement d'une musique/playlist:\n${(<Error>error).message}`
+				);
+
 				return await interaction.followUp({
-					content: `❌ | Le morceau **${uri}** n'a pas été trouvé !`
+					content: `❌ | Le morceau **${uri.value}** n'a pas été trouvé !`
 				});
 			}
 

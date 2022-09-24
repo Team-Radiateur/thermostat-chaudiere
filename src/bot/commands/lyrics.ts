@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import axios, { AxiosError } from "axios";
 import { env } from "../../../config/env";
+import { logger } from "../../helpers/logger";
 import { prepareResponseToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
@@ -75,6 +76,8 @@ const lyrics: DiscordCommand = {
 					});
 				}
 			}
+
+			logger.error(`Une erreur est survenue lors de la recherche des paroles:\n${(<Error>error).message}`);
 
 			return await interaction.followUp({
 				embeds: [embed.setDescription("Une erreur est survenue lors de la recherche des paroles")]

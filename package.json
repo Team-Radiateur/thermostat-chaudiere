@@ -19,7 +19,7 @@
 	"author": "Christophe 'DrakeXorn' Bernard",
 	"license": "MIT",
 	"dependencies": {
-		"@discordjs/collection": "1.0.1",
+		"@discordjs/collection": "1.1.0",
 		"@discordjs/opus": "0.8.0",
 		"@discordjs/rest": "1.1.0",
 		"@discordjs/voice": "0.11.0",
@@ -27,88 +27,31 @@
 		"better-sqlite3": "7.6.2",
 		"bufferutil": "4.0.6",
 		"discord-markdown": "2.5.1",
-		"discord-music-player": "9.0.2",
-		"discord.js": "14.2.0",
-		"dotenv": "16.0.1",
+		"discord-music-player": "9.1.1",
+		"discord.js": "14.4.0",
+		"dotenv": "16.0.2",
 		"erlpack": "0.1.4",
 		"express": "4.18.1",
-		"ffmpeg-static": "5.0.2",
-		"fluent-ffmpeg": "^2.1.2",
+		"ffmpeg-static": "5.1.0",
+		"fluent-ffmpeg": "2.1.2",
 		"sodium": "3.0.2",
 		"string-progressbar": "1.0.4",
 		"serilogger": "0.4.1",
 		"utf-8-validate": "5.0.9",
-		"ytdl-core": "github:GreepTheSheep/node-ytdl-core",
+		"ytdl-core": "4.11.2",
 		"zlib-sync": "0.1.7"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "7.6.0",
-		"@types/express": "4.17.13",
-		"@types/node": "18.7.6",
-		"@typescript-eslint/eslint-plugin": "5.33.1",
-		"@typescript-eslint/parser": "5.32.0",
-		"discord-api-types": "0.37.9",
-		"eslint": "8.23.1",
+		"@types/express": "4.17.14",
+		"@types/node": "18.7.20",
+		"@typescript-eslint/eslint-plugin": "5.38.0",
+		"@typescript-eslint/parser": "5.38.0",
+		"discord-api-types": "0.37.10",
+		"eslint": "8.24.0",
 		"husky": "8.0.1",
-		"lint-staged": "^13.0.3",
+		"lint-staged": "13.0.3",
 		"prettier-eslint": "15.0.1",
-		"typescript": "4.7.4"
-	},
-	"eslintConfig": {
-		"env": {
-			"es2021": true
-		},
-		"extends": [
-			"eslint:recommended",
-			"plugin:@typescript-eslint/recommended"
-		],
-		"parser": "@typescript-eslint/parser",
-		"parserOptions": {
-			"ecmaVersion": "latest",
-			"sourceType": "module"
-		},
-		"plugins": [
-			"@typescript-eslint"
-		],
-		"rules": {
-			"import/extensions": [
-				0
-			],
-			"import/prefer-default-export": "off",
-			"no-use-before-define": "off",
-			"@typescript-eslint/no-use-before-define": [
-				"error"
-			],
-			"indent": "off",
-			"max-len": [
-				"error",
-				120
-			],
-			"semi": "error",
-			"prefer-destructuring": "error",
-			"space-in-parens": "off",
-			"space-before-blocks": "warn",
-			"object-curly-spacing": [
-				"error",
-				"always"
-			],
-			"no-trailing-spaces": "error",
-			"@typescript-eslint/no-unused-vars": "error",
-			"no-unused-vars": "off",
-			"quotes": [
-				"error",
-				"double",
-				{
-					"allowTemplateLiterals": true
-				}
-			],
-			"@typescript-eslint/indent": [
-				"error",
-				"tab",
-				{
-					"SwitchCase": 1
-				}
-			]
-		}
+		"typescript": "4.8.3"
 	}
 }
