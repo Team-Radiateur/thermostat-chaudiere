@@ -148,7 +148,7 @@ const poll: DiscordCommand = {
 					if (!(reaction.emoji.name! in allowedReactions)) {
 						continue;
 					}
-					reactions[<string>reaction.emoji.name]++;
+					reactions[<string>reaction.emoji.name] += reaction.count;
 				}
 
 				const chart = new ImageCharts()
@@ -199,7 +199,7 @@ const poll: DiscordCommand = {
 							.setDescription(
 								`Voici les résultats du sondage lancé par ${
 									interaction.user.username
-								} le ${today.toLocaleDateString()}`
+								} le ${today.toLocaleDateString("fr")}`
 							)
 							.addFields(
 								Object.entries(reactions).map(([key, value], index) => ({
