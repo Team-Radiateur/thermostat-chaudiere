@@ -9,6 +9,16 @@ import { DiscordEvent } from "../types/discordEvents";
 
 const getType = (type: ChannelType) => {
 	switch (type) {
+		case ChannelType.AnnouncementThread:
+			return "Thread d'annonces";
+		case ChannelType.PublicThread:
+			return "Thread public";
+		case ChannelType.PrivateThread:
+			return "Thread privé";
+		case ChannelType.GuildStageVoice:
+			return "Canal vocal de présentation";
+		case ChannelType.GuildDirectory:
+			return "Annuaire de guilde";
 		case ChannelType.GuildText:
 			return "salon textuel";
 		case ChannelType.GuildVoice:
@@ -19,8 +29,10 @@ const getType = (type: ChannelType) => {
 			return "salon de groupe";
 		case ChannelType.GuildCategory:
 			return "catégorie";
-		case ChannelType.GuildNews:
+		case ChannelType.GuildAnnouncement:
 			return "News";
+		case ChannelType.GuildForum:
+			return "Forum";
 		default:
 			return "Inconnu";
 	}
