@@ -153,7 +153,7 @@ const poll: DiscordCommand = {
 
 				const chart = new ImageCharts()
 					.cht("p")
-					.chco(env.bot.color)
+					.chco(env.bot.color.split("#")[1])
 					.chs("700x700")
 					.chd(`a:${Object.values(reactions).join(",")}`)
 					.chl(
