@@ -1,5 +1,5 @@
 import { roleMention, SlashCommandBuilder } from "@discordjs/builders";
-import { Guild, PermissionsBitField, TextChannel } from "discord.js";
+import { PermissionsBitField } from "discord.js";
 
 import { env } from "../../../config/env";
 import { prepareEmbed, replyToInteraction } from "../../helpers/macros";
@@ -22,13 +22,17 @@ const announce: DiscordCommand = {
 				embed.setDescription("Eh, oh ! Tu t'es pris pour qui là, Marseillais ?")
 			);
 		}
-		const channelAndToTag = env.bot.announcementChannelByGuild[(interaction.guild as Guild).id];
+		const { guild } = interaction;
 
-		const announcementChannel = (interaction.guild as Guild).channels.cache.find(
-			channel => channel.id === channelAndToTag.channel
-		);
+		if (!guild) {
+			return;
+		}
 
-		if (!announcementChannel || !(announcementChannel instanceof TextChannel)) {
+		const channelAndToTag = env.bot.announcementChannelByGuild[guild.id];
+
+		const announcementChannel = await guild.channels.fetch(channelAndToTag.channel);
+
+		if (!announcementChannel || !announcementChannel.isTextBased()) {
 			return await replyToInteraction(
 				interaction,
 				embed.setDescription("Le canal de publication n'est pas correctement configuré")
