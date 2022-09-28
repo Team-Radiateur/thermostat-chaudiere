@@ -8,7 +8,7 @@ import { DiscordCommand } from "../types/discordEvents";
 
 const createRoles: DiscordCommand = {
 	data: new SlashCommandBuilder()
-		.setName("roles")
+		.setName("create_roles_message")
 		.setDescription(
 			"Crée l'embed d'ajout de rôles et l'envoie dans le canal correspondant s'il n'existe pas encore"
 		) as SlashCommandBuilder,
