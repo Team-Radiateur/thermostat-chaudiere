@@ -128,26 +128,25 @@ const poll: DiscordCommand = {
 		}
 		await message.react("❌");
 
-		const reactions = Object.entries(emojiAnswers).reduce((acc, [key, value]) => {
-			acc[value.emoji] = 0;
-			allowedReactions[value.emoji] = key;
-			return acc;
-		}, {} as { [key: string]: number });
-
-		const generalReactionsCollector = message.createReactionCollector().on("collect", reaction => {
-			if (!(reaction.emoji.name! in allowedReactions)) {
-				return;
-			}
-
-			reactions[<string>reaction.emoji.name]++;
-		});
-
 		const closingReactionCollector = message
 			.createReactionCollector({
 				filter: (reaction, user) => user.id === interaction.user.id && reaction.emoji.name === "❌",
 				max: 1
 			})
 			.on("collect", async () => {
+				const reactions = Object.entries(emojiAnswers).reduce((acc, [key, value]) => {
+					acc[value.emoji] = 0;
+					allowedReactions[value.emoji] = key;
+					return acc;
+				}, {} as { [key: string]: number });
+
+				for (const reaction of message.reactions.cache.values()) {
+					if (!(reaction.emoji.name! in allowedReactions)) {
+						return;
+					}
+					reactions[<string>reaction.emoji.name]++;
+				}
+
 				logger.info(`Sondage ${message.id} fini. Création de l'image de résultats...`);
 
 				const chart = new ImageCharts()
@@ -189,6 +188,7 @@ const poll: DiscordCommand = {
 							.setTimestamp(today)
 					]
 				});
+				await message.reactions.removeAll();
 				await resultsChannel.send({
 					embeds: [
 						new EmbedBuilder()
@@ -212,7 +212,6 @@ const poll: DiscordCommand = {
 					]
 				});
 
-				generalReactionsCollector.stop();
 				closingReactionCollector.stop();
 			});
 	}
