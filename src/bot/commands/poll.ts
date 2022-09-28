@@ -200,9 +200,9 @@ const poll: DiscordCommand = {
 								} le ${today.toLocaleDateString()}`
 							)
 							.addFields(
-								Object.keys(reactions).map(key => ({
-									name: key,
-									value: `${reactions[key]} votes`,
+								Object.entries(reactions).map(([key, value], index) => ({
+									name: `${key} - ${emojiAnswers[index].answer}`,
+									value: `${value} votes`,
 									inline: true
 								}))
 							)
