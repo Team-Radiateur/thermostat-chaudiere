@@ -1,43 +1,56 @@
+import { ClientWithSelfRoleManager as SelfRoleManager } from "@hunteroi/discord-selfrole";
+import { SelfRoleOptions } from "@hunteroi/discord-selfrole/lib/types";
 import Database from "better-sqlite3";
 import { Player } from "discord-music-player";
-import { Client, Collection, GatewayIntentBits, Snowflake, TextChannel } from "discord.js";
+import { ClientOptions, Collection, GatewayIntentBits, Snowflake, TextChannel } from "discord.js";
 import { env } from "../../../config/env";
 import { logger } from "../../helpers/logger";
 
 import { DiscordCommand } from "./discordEvents";
 
-export class DiscordClient {
+export class DiscordClient extends SelfRoleManager {
 	public static database: Database.Database;
 	public static commands: Collection<string, DiscordCommand>;
-	private static instance: Client;
+	private static instance: SelfRoleManager;
 
-	public static getInstance: () => Client = () => {
+	private constructor(options: ClientOptions, selfRoleOptions: SelfRoleOptions) {
+		super(options, selfRoleOptions);
+
+		DiscordClient.database = new Database(`${__dirname}/../../../../data/bot.sqlite`);
+		DiscordClient.commands = new Collection();
+	}
+
+	public static getInstance: () => SelfRoleManager = () => {
 		if (!DiscordClient.instance) {
-			DiscordClient.instance = new Client({
-				allowedMentions: {
-					parse: ["users", "roles"],
-					repliedUser: true
+			DiscordClient.instance = new DiscordClient(
+				{
+					allowedMentions: {
+						parse: ["users", "roles"],
+						repliedUser: true
+					},
+					intents: [
+						GatewayIntentBits.Guilds,
+						GatewayIntentBits.GuildMembers,
+						GatewayIntentBits.GuildBans,
+						GatewayIntentBits.GuildEmojisAndStickers,
+						GatewayIntentBits.GuildIntegrations,
+						GatewayIntentBits.GuildWebhooks,
+						GatewayIntentBits.GuildInvites,
+						GatewayIntentBits.GuildVoiceStates,
+						GatewayIntentBits.GuildPresences,
+						GatewayIntentBits.GuildMessages,
+						GatewayIntentBits.GuildMessageReactions,
+						GatewayIntentBits.GuildMessageTyping,
+						GatewayIntentBits.GuildScheduledEvents,
+						GatewayIntentBits.MessageContent
+					]
 				},
-				intents: [
-					GatewayIntentBits.Guilds,
-					GatewayIntentBits.GuildMembers,
-					GatewayIntentBits.GuildBans,
-					GatewayIntentBits.GuildEmojisAndStickers,
-					GatewayIntentBits.GuildIntegrations,
-					GatewayIntentBits.GuildWebhooks,
-					GatewayIntentBits.GuildInvites,
-					GatewayIntentBits.GuildVoiceStates,
-					GatewayIntentBits.GuildPresences,
-					GatewayIntentBits.GuildMessages,
-					GatewayIntentBits.GuildMessageReactions,
-					GatewayIntentBits.GuildMessageTyping,
-					GatewayIntentBits.GuildScheduledEvents,
-					GatewayIntentBits.MessageContent
-				]
-			});
-
-			DiscordClient.database = new Database(`${__dirname}/../../../../data/bot.sqlite`);
-			DiscordClient.commands = new Collection();
+				{
+					channelsMessagesFetchLimit: 0,
+					deleteAfterUnregistration: true,
+					useReactions: false
+				}
+			);
 		}
 
 		return DiscordClient.instance;

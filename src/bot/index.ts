@@ -1,5 +1,7 @@
 import { REST } from "@discordjs/rest";
+import { SelfRoleManagerEvents } from "@hunteroi/discord-selfrole";
 import { Routes } from "discord-api-types/v10";
+import { ButtonInteraction, GuildMember, Role, TextChannel } from "discord.js";
 import { readdir } from "fs/promises";
 import { env } from "../../config/env";
 
@@ -10,6 +12,37 @@ import { DiscordEvent } from "./types/discordEvents";
 const startBot = async (): Promise<boolean> => {
 	const client = DiscordClient.getInstance();
 	const fullyLoaded = false;
+
+	client.on(SelfRoleManagerEvents.channelRegister, (channel: TextChannel, options) =>
+		console.log(`le canal ${channel.name} (${channel.id}) a bien été inscrit avec les options suivantes :`, options)
+	);
+
+	client.on(SelfRoleManagerEvents.channelUnregister, (channel: TextChannel, options) =>
+		console.log(`Channel ${channel.name} (${channel.id}) a bien été désinscrit des options suivantes : `, options)
+	);
+
+	client.on(SelfRoleManagerEvents.roleAdd, (role: Role, member: GuildMember) => {
+		logger.info(`Ajout de ${role.name} à ${member.user.tag}`);
+	});
+
+	client.on(SelfRoleManagerEvents.roleRemove, (role: Role, member: GuildMember) => {
+		logger.info(`${member.user.tag} vient de se retirer le rôle ${role.name}`);
+	});
+
+	client.on(
+		SelfRoleManagerEvents.maxRolesReach,
+		async (member: GuildMember, interaction: ButtonInteraction, nbRoles: number, maxRoles: number) => {
+			logger.info(`${member.user.tag} a atteint ou excédé le nombre maximum de rôles (${nbRoles}/${maxRoles}) !`);
+
+			await interaction.editReply({
+				content: `You reached or exceed the maximum number of roles (${nbRoles}/${maxRoles})!`
+			});
+		}
+	);
+
+	client.on(SelfRoleManagerEvents.error, error => {
+		logger.error(`Une erreur est survenue :\n${error}`);
+	});
 
 	try {
 		const commandFiles = (await readdir(`${__dirname}/commands`)).filter(file => file.endsWith(".js"));
