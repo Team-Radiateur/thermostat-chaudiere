@@ -15,6 +15,7 @@ export interface FileSinkOptions {
 
 class FileSink implements Sink {
 	#name: string;
+	#newFile: boolean;
 	readonly #level: LogEventLevel;
 	readonly #outputDir: string;
 	readonly #maxFileSize: number;
@@ -26,6 +27,7 @@ class FileSink implements Sink {
 		this.#outputDir = outputDir || "./logs";
 		this.#maxFileSize = maxFileSize || one_MB * 10;
 		this.#content = [];
+		this.#newFile = true;
 	}
 
 	get fullname(): string {
@@ -67,6 +69,9 @@ class FileSink implements Sink {
 	async #checkFileExists() {
 		if (!fs.existsSync(this.filePath)) {
 			await fsp.writeFile(this.filePath, "", { encoding: "utf-8" });
+			this.#newFile = true;
+		} else {
+			this.#newFile = false;
 		}
 	}
 
@@ -95,7 +100,9 @@ class FileSink implements Sink {
 	}
 
 	async flush(): Promise<void> {
-		await fsp.appendFile(this.filePath, this.#content.join("\n"), { encoding: "utf-8" });
+		await fsp.appendFile(this.filePath, `${this.#newFile ? "" : "\n"}${this.#content.join("\n")}`, {
+			encoding: "utf-8"
+		});
 
 		this.#content.length = 0;
 	}
@@ -134,7 +141,7 @@ function loggerWarning(text: string): void {
 }
 
 function loggerError(text: string): void {
-	log.error(`${readableNow()} ${text}`);
+	log.error(`${readableNow()} | ${text}`);
 }
 
 export const logger = {

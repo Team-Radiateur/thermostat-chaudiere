@@ -9,7 +9,7 @@ const roleUpdate: DiscordEvent = {
 	once: false,
 	execute: async (role: Role) => {
 		const { guild } = role;
-		const channel = DiscordClient.getInstance().channels.cache.get(
+		const channel = await DiscordClient.getInstance().channels.fetch(
 			env.bot.userUpdateLoggingChannelByGuild[guild.id]
 		);
 

@@ -1,4 +1,4 @@
-import { HexColorString } from "discord.js";
+import { HexColorString, Snowflake } from "discord.js";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -7,7 +7,7 @@ const guilds = (process.env.GUILDS || "").split(",").filter(guild => guild !== "
 const guildReducer = (accumulator: { [guild: string]: string }, channelOrUserByGuild: string) => {
 	const [guild, channelOrUser] = channelOrUserByGuild.split(":");
 	if (guild && channelOrUser && guilds.find(guildId => guildId === guild)) {
-		accumulator[guild] = channelOrUser;
+		accumulator[guild] = <Snowflake>channelOrUser;
 	}
 
 	return accumulator;
@@ -33,26 +33,38 @@ export const env = {
 				const [guild, channel, toTag] = channelGuild.split(":");
 				if (guild && channel && toTag && guilds.find(guildId => guildId === guild)) {
 					accumulator[guild] = {
-						channel: channel,
-						toTag: toTag
+						channel: <Snowflake>channel,
+						toTag: <Snowflake>toTag
 					};
 				}
 
 				return accumulator;
-			}, {} as { [guild: string]: { channel: string; toTag: string } }),
+			}, {} as { [guild: Snowflake]: { channel: Snowflake; toTag: Snowflake } }),
 		voiceLoggingChannelByGuild: (process.env.VOICE_LOGGING_CHANNEL_BY_GUILD || "")
 			.split(",")
 			.filter(channel => channel !== "")
-			.reduce(guildReducer, {} as { [guild: string]: string }),
+			.reduce(guildReducer, {} as { [guild: Snowflake]: Snowflake }),
 		userUpdateLoggingChannelByGuild: (process.env.USER_UPDATE_LOGGING_CHANNEL_BY_GUILD || "")
 			.split(",")
 			.filter(channel => channel !== "")
-			.reduce(guildReducer, {} as { [guild: string]: string }),
+			.reduce(guildReducer, {} as { [guild: Snowflake]: Snowflake }),
 		roleToTagOnUserRemove: (process.env.ROLE_TO_TAG_ON_USER_REMOVE || "")
 			.split(",")
 			.filter(channel => channel !== "")
-			.reduce(guildReducer, {} as { [guild: string]: string }),
-		musicChannels: (process.env.MUSIC_CHANNELS || "").split(",").filter(channel => channel !== "")
+			.reduce(guildReducer, {} as { [guild: Snowflake]: Snowflake }),
+		musicChannels: (process.env.MUSIC_CHANNELS || "").split(",").filter(channel => channel !== ""),
+		rolesChannelsIds: (process.env.ROLES_CHANNELS_BY_GUILD || "")
+			.split(",")
+			.filter(channel => channel !== "")
+			.reduce(guildReducer, {} as { [guild: Snowflake]: Snowflake }),
+		pollChannelByGuild: (process.env.POLL_CHANNEL_BY_GUILD || "")
+			.split(",")
+			.filter(channel => channel !== "")
+			.reduce(guildReducer, {} as { [guild: Snowflake]: Snowflake }),
+		pollResultChannelByGuild: (process.env.POLL_RESULTS_CHANNEL_BY_GUILD || "")
+			.split(",")
+			.filter(channel => channel !== "")
+			.reduce(guildReducer, {} as { [guild: Snowflake]: Snowflake })
 	},
 	external: {
 		lyricsApi: {
