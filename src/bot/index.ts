@@ -10,39 +10,41 @@ import { DiscordClient } from "./types/discordClient";
 import { DiscordEvent } from "./types/discordEvents";
 
 const startBot = async (): Promise<boolean> => {
-	const client = DiscordClient.getInstance();
+	const client = DiscordClient.getInstance()
+		.on(SelfRoleManagerEvents.channelRegister, (channel: TextChannel, options) =>
+			console.log(
+				`Le canal ${channel.name} (${channel.id}) a bien été inscrit avec les options suivantes :`,
+				options
+			)
+		)
+		.on(SelfRoleManagerEvents.channelUnregister, (channel: TextChannel, options) =>
+			console.log(
+				`Le canal ${channel.name} (${channel.id}) a bien été désinscrit des options suivantes : `,
+				options
+			)
+		)
+		.on(SelfRoleManagerEvents.roleAdd, (role: Role, member: GuildMember) => {
+			logger.info(`Ajout de ${role.name} à ${member.user.tag}`);
+		})
+		.on(SelfRoleManagerEvents.roleRemove, (role: Role, member: GuildMember) => {
+			logger.info(`${member.user.tag} vient de se retirer le rôle ${role.name}`);
+		})
+		.on(
+			SelfRoleManagerEvents.maxRolesReach,
+			async (member: GuildMember, interaction: ButtonInteraction, nbRoles: number, maxRoles: number) => {
+				logger.info(
+					`${member.user.tag} a atteint ou excédé le nombre maximum de rôles (${nbRoles}/${maxRoles}) !`
+				);
+
+				await interaction.editReply({
+					content: `You reached or exceed the maximum number of roles (${nbRoles}/${maxRoles})!`
+				});
+			}
+		)
+		.on(SelfRoleManagerEvents.error, error => {
+			logger.error(`Une erreur est survenue :\n${error}`);
+		});
 	const fullyLoaded = false;
-
-	client.on(SelfRoleManagerEvents.channelRegister, (channel: TextChannel, options) =>
-		console.log(`le canal ${channel.name} (${channel.id}) a bien été inscrit avec les options suivantes :`, options)
-	);
-
-	client.on(SelfRoleManagerEvents.channelUnregister, (channel: TextChannel, options) =>
-		console.log(`Channel ${channel.name} (${channel.id}) a bien été désinscrit des options suivantes : `, options)
-	);
-
-	client.on(SelfRoleManagerEvents.roleAdd, (role: Role, member: GuildMember) => {
-		logger.info(`Ajout de ${role.name} à ${member.user.tag}`);
-	});
-
-	client.on(SelfRoleManagerEvents.roleRemove, (role: Role, member: GuildMember) => {
-		logger.info(`${member.user.tag} vient de se retirer le rôle ${role.name}`);
-	});
-
-	client.on(
-		SelfRoleManagerEvents.maxRolesReach,
-		async (member: GuildMember, interaction: ButtonInteraction, nbRoles: number, maxRoles: number) => {
-			logger.info(`${member.user.tag} a atteint ou excédé le nombre maximum de rôles (${nbRoles}/${maxRoles}) !`);
-
-			await interaction.editReply({
-				content: `You reached or exceed the maximum number of roles (${nbRoles}/${maxRoles})!`
-			});
-		}
-	);
-
-	client.on(SelfRoleManagerEvents.error, error => {
-		logger.error(`Une erreur est survenue :\n${error}`);
-	});
 
 	try {
 		const commandFiles = (await readdir(`${__dirname}/commands`)).filter(file => file.endsWith(".js"));
@@ -60,16 +62,16 @@ const startBot = async (): Promise<boolean> => {
 		const rest = new REST({ version: "10" }).setToken(env.bot.token);
 
 		try {
-			logger.info("Started refreshing application (/) commands.");
+			logger.info("Démarrage du rafraichissement des (/) commands.");
 
 			for (const guild of env.bot.guilds) {
-				logger.info(`Refreshing ${guild}'s commands...`);
+				logger.info(`Rafraichissement de commandes de ${guild}...`);
 				await rest.put(Routes.applicationGuildCommands(env.bot.clientId, guild), { body: commands });
 			}
 
-			logger.info("Successfully reloaded application (/) commands.");
+			logger.info("Rafraichissement des commandes (/) réussi.");
 		} catch (error) {
-			logger.error(`An error occurred while reloading the commands:\n${(<Error>error).message}`);
+			logger.error(`Une erreur est survenue durant le rafraichissement :\n${(<Error>error).message}`);
 		}
 
 		for (const file of eventFiles) {

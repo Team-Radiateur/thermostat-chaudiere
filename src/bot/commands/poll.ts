@@ -1,6 +1,6 @@
 import { bold, SlashCommandBuilder } from "@discordjs/builders";
 import { EmbedBuilder, PermissionsBitField, TextBasedChannel, TextChannel } from "discord.js";
-import ImageCharts from "image-charts";
+import QuickChart from "quickchart-js";
 
 import { env } from "../../../config/env";
 import { emoji } from "../../helpers/emojiCharacters";
@@ -151,18 +151,25 @@ const poll: DiscordCommand = {
 					reactions[<string>reaction.emoji.name] += reaction.count;
 				}
 
-				const chart = new ImageCharts()
-					.cht("p")
-					.chco(env.bot.color.split("#")[1])
-					.chs("700x700")
-					.chd(`a:${Object.values(reactions).join(",")}`)
-					.chl(
-						Object.keys(reactions)
-							.map(
-								(_value, index) => `Réponse ${String.fromCharCode("A".charCodeAt(0) + index)}` as string
-							)
-							.join("|")
-					);
+				const chart = new QuickChart()
+					.setConfig({
+						type: "pie",
+						data: {
+							labels: Object.values(emojiAnswers).map(e => e.answer),
+							datasets: [
+								{
+									label: "Résultats du sondage",
+									data: Object.values(reactions)
+								}
+							]
+						},
+						options: {
+							backgroundColor: "transparent",
+							color: "white"
+						}
+					})
+					.setWidth(400)
+					.setHeight(400);
 
 				const { guild } = interaction;
 
@@ -208,7 +215,7 @@ const poll: DiscordCommand = {
 									inline: true
 								}))
 							)
-							.setImage(chart.toURL())
+							.setImage(chart.getUrl())
 							.setTimestamp(new Date())
 							.setFooter({ text: "Thermostat", iconURL: DiscordClient.getInstance().user!.avatarURL()! })
 					]

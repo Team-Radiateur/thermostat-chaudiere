@@ -53,10 +53,7 @@ export const env = {
 			.filter(channel => channel !== "")
 			.reduce(guildReducer, {} as { [guild: Snowflake]: Snowflake }),
 		musicChannels: (process.env.MUSIC_CHANNELS || "").split(",").filter(channel => channel !== ""),
-		rolesChannelsIds: (process.env.ROLES_CHANNELS_BY_GUILD || "")
-			.split(",")
-			.filter(channel => channel !== "")
-			.reduce(guildReducer, {} as { [guild: Snowflake]: Snowflake }),
+		rolesChannelId: process.env.ROLES_CHANNEL_ID || "",
 		pollChannelByGuild: (process.env.POLL_CHANNEL_BY_GUILD || "")
 			.split(",")
 			.filter(channel => channel !== "")
