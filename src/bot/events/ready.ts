@@ -8,24 +8,7 @@ import { DiscordEvent } from "../types/discordEvents";
 
 async function registerRolesChannels(client: DiscordClient): Promise<void> {
 	await client.selfRoleManager.registerChannel(env.bot.rolesChannelId, {
-		rolesToEmojis: [
-			{
-				role: "914630777428410378", // Minecraft
-				emoji: "<:minecraft:1029528088360538194>"
-			},
-			{
-				role: "861357497108660245", // Modded Minecraft
-				emoji: "<:ftb:1029528863627284491>"
-			},
-			{
-				role: "1024576021707624478", // Satisfactory
-				emoji: "<:satisfactory:1029528562685988917>"
-			},
-			{
-				role: "918494068374392852", // Farming Simulator
-				emoji: "<:fs22:1029529614265106452>"
-			}
-		],
+		rolesToEmojis: [...env.bot.roleEmojiPairs],
 		message: {
 			options: {
 				sendAsEmbed: true,

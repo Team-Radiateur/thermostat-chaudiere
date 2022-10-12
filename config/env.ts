@@ -54,6 +54,17 @@ export const env = {
 			.reduce(guildReducer, {} as { [guild: Snowflake]: Snowflake }),
 		musicChannels: (process.env.MUSIC_CHANNELS || "").split(",").filter(channel => channel !== ""),
 		rolesChannelId: process.env.ROLES_CHANNEL_ID || "",
+		roleEmojiPairs: (process.env.ROLES_EMOJI_PAIRS || "")
+			.split(",")
+			.filter(pair => pair !== "")
+			.map(pair => pair.split(";"))
+			.reduce((accumulator, [role, emoji]) => {
+				accumulator.push({
+					emoji,
+					role
+				});
+				return accumulator;
+			}, [] as { emoji: Snowflake; role: Snowflake }[]),
 		pollChannelByGuild: (process.env.POLL_CHANNEL_BY_GUILD || "")
 			.split(",")
 			.filter(channel => channel !== "")
