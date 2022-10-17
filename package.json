@@ -51,7 +51,7 @@
 		"@types/node": "18.7.21",
 		"@typescript-eslint/eslint-plugin": "5.38.1",
 		"@typescript-eslint/parser": "5.38.1",
-		"discord-api-types": "0.37.10",
+		"discord-api-types": "0.37.14",
 		"eslint": "8.24.0",
 		"husky": "8.0.1",
 		"lint-staged": "13.0.3",
