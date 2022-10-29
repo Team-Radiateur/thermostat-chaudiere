@@ -53,15 +53,9 @@ const startBot = async (): Promise<boolean> => {
 				.setTitle("Valve thermostatique administrative")
 				.setDescription(`Retrait du rôle ${role} de votre compte effectué`);
 
-			if (interaction.replied) {
-				await interaction.editReply({
-					embeds: [embed]
-				});
-			} else {
-				await interaction.reply({
-					embeds: [embed]
-				});
-			}
+			await interaction.editReply({
+				embeds: [embed]
+			});
 		})
 		.on("roleAdd", async (role: RoleResolvable, member: GuildMember, interaction: ButtonInteraction) => {
 			logger.info(`Rôle ${role} donné à ${member.displayName}`);
@@ -70,15 +64,9 @@ const startBot = async (): Promise<boolean> => {
 				.setTitle("Valve thermostatique administrative")
 				.setDescription(`Ajout du rôle ${role} à votre compte effectué`);
 
-			if (interaction.replied) {
-				await interaction.editReply({
-					embeds: [embed]
-				});
-			} else {
-				await interaction.reply({
-					embeds: [embed]
-				});
-			}
+			await interaction.editReply({
+				embeds: [embed]
+			});
 		});
 	const fullyLoaded = false;
 
