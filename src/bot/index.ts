@@ -1,7 +1,7 @@
 import { REST } from "@discordjs/rest";
 import { SelfRoleManagerEvents } from "@hunteroi/discord-selfrole";
 import { Routes } from "discord-api-types/v10";
-import { ButtonInteraction, GuildMember, Role, TextChannel } from "discord.js";
+import { ButtonInteraction, EmbedBuilder, GuildMember, Role, RoleResolvable, TextChannel } from "discord.js";
 import { readdir } from "fs/promises";
 import { env } from "../../config/env";
 
@@ -43,6 +43,42 @@ const startBot = async (): Promise<boolean> => {
 		)
 		.on(SelfRoleManagerEvents.error, error => {
 			logger.error(`Une erreur est survenue :\n${error}`);
+		});
+
+	client.selfRoleManager
+		.on("roleRemove", async (role: RoleResolvable, member: GuildMember, interaction: ButtonInteraction) => {
+			logger.info(`Rôle ${role} retiré de ${member.displayName}`);
+
+			const embed = new EmbedBuilder()
+				.setTitle("Valve thermostatique administrative")
+				.setDescription(`Retrait du rôle ${role} de votre compte effectué`);
+
+			if (interaction.replied) {
+				await interaction.editReply({
+					embeds: [embed]
+				});
+			} else {
+				await interaction.reply({
+					embeds: [embed]
+				});
+			}
+		})
+		.on("roleAdd", async (role: RoleResolvable, member: GuildMember, interaction: ButtonInteraction) => {
+			logger.info(`Rôle ${role} donné à ${member.displayName}`);
+
+			const embed = new EmbedBuilder()
+				.setTitle("Valve thermostatique administrative")
+				.setDescription(`Ajout du rôle ${role} à votre compte effectué`);
+
+			if (interaction.replied) {
+				await interaction.editReply({
+					embeds: [embed]
+				});
+			} else {
+				await interaction.reply({
+					embeds: [embed]
+				});
+			}
 		});
 	const fullyLoaded = false;
 
