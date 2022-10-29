@@ -1,3 +1,4 @@
+import { roleMention } from "@discordjs/builders";
 import { REST } from "@discordjs/rest";
 import { SelfRoleManagerEvents } from "@hunteroi/discord-selfrole";
 import { Routes } from "discord-api-types/v10";
@@ -51,7 +52,7 @@ const startBot = async (): Promise<boolean> => {
 
 			const embed = new EmbedBuilder()
 				.setTitle("Valve thermostatique administrative")
-				.setDescription(`Retrait du rôle ${role} de votre compte effectué`);
+				.setDescription(`Retrait du rôle ${roleMention(role.toString())} de votre compte effectué`);
 
 			await interaction.editReply({
 				embeds: [embed]
@@ -62,7 +63,7 @@ const startBot = async (): Promise<boolean> => {
 
 			const embed = new EmbedBuilder()
 				.setTitle("Valve thermostatique administrative")
-				.setDescription(`Ajout du rôle ${role} à votre compte effectué`);
+				.setDescription(`Ajout du rôle ${roleMention(role.toString())} à votre compte effectué`);
 
 			await interaction.editReply({
 				embeds: [embed]
