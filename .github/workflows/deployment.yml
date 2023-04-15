@@ -21,5 +21,5 @@ jobs:
           PTERODACTYL_API_URL: ${{ secrets.PTERODACTYL_API_URL }}
           PTERODACTYL_SERVER_ID: ${{ secrets.PTERODACTYL_SERVER_ID }}
         run: |
-          npm install
+          yarn
           node src/index.js
