@@ -39,7 +39,9 @@ const lyrics: DiscordCommand = {
 			});
 		}
 
-		const { songs } = queue;
+		const { tracks } = queue;
+		const songs = tracks.toArray();
+
 		if (!music && (!songs || !songs.length)) {
 			return await interaction.reply({
 				embeds: [embed.setDescription("Il n'y a pas de musique en cours de lecture")]
@@ -50,7 +52,7 @@ const lyrics: DiscordCommand = {
 
 		try {
 			const { data } = await axios.get<LyricsRequestData>(
-				`${env.external.lyricsApi.url}/${encodeURIComponent(music || songs[0].name)}`,
+				`${env.external.lyricsApi.url}/${encodeURIComponent(music || songs[0].title)}`,
 				{
 					headers: {
 						username: env.external.lyricsApi.username,
@@ -62,7 +64,7 @@ const lyrics: DiscordCommand = {
 			return await interaction.followUp({
 				embeds: [
 					embed
-						.setDescription(`Paroles trouvées pour ${music || songs[0].name}:\n\n${data.content}`)
+						.setDescription(`Paroles trouvées pour ${music || songs[0].title}:\n\n${data.content}`)
 						.setImage(data.image)
 				]
 			});

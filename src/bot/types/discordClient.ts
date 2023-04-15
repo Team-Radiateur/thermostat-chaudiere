@@ -1,7 +1,7 @@
 import { ClientWithSelfRoleManager as SelfRoleManager } from "@hunteroi/discord-selfrole";
 import { SelfRoleOptions } from "@hunteroi/discord-selfrole/lib/types";
 import Database from "better-sqlite3";
-import { Player, PlayerOptions } from "discord-music-player";
+import { Player, PlayerInitOptions } from "discord-player";
 import { ClientOptions, Collection, IntentsBitField, Snowflake, TextChannel } from "discord.js";
 import { env } from "../../../config/env";
 import { logger } from "../../helpers/logger";
@@ -31,7 +31,7 @@ export class DiscordClient extends SelfRoleManager {
 					intents: [
 						IntentsBitField.Flags.Guilds,
 						IntentsBitField.Flags.GuildMembers,
-						IntentsBitField.Flags.GuildBans,
+						IntentsBitField.Flags.GuildModeration,
 						IntentsBitField.Flags.GuildEmojisAndStickers,
 						IntentsBitField.Flags.GuildIntegrations,
 						IntentsBitField.Flags.GuildWebhooks,
@@ -58,10 +58,10 @@ export class DiscordClient extends SelfRoleManager {
 }
 
 export class DiscordPlayer extends Player {
-	private static instance: Player;
+	private static instance: DiscordPlayer;
 	private channels: Collection<Snowflake, TextChannel>;
 
-	private constructor(client: DiscordClient, options: PlayerOptions) {
+	private constructor(client: DiscordClient, options: PlayerInitOptions) {
 		super(client, options);
 		this.channels = new Collection();
 
@@ -71,28 +71,28 @@ export class DiscordPlayer extends Player {
 			this.channels.set(channel, textChannel);
 		});
 
-		this.on("songChanged", async (queue, song) => {
-			const channel = this.channels.get(queue.guild.id);
-			await channel?.send(`🎶 | En cours de lecture **${song.name}** (${song.url}) !`);
-		})
-			.on("channelEmpty", async queue => {
+		this.events
+			.on("playerStart", async (queue, song) => {
+				const channel = this.channels.get(queue.guild.id);
+				await channel?.send(`🎶 | En cours de lecture **${song.title}** (${song.url}) !`);
+			})
+			.on("emptyChannel", async queue => {
 				const channel = this.channels.get(queue.guild.id);
 
 				await channel?.send("😬 | Bon bah y'a plus personne... Je me casse aussi");
-				queue.leave();
 			})
-			.on("clientDisconnect", async queue => {
+			.on("disconnect", async queue => {
 				const channel = this.channels.get(queue.guild.id);
 
 				await channel?.send("➡️🚪 | Allez, mon ami (Drake) et ses connaissances, j'me casse !");
 			})
-			.on("error", async (error, queue) => {
+			.on("error", async (queue, error) => {
 				const channel = this.channels.get(queue.guild.id);
 
 				logger.error(`Une erreur est survenue lors de la lecture de la musique\n${error}`);
 				await channel?.send("❌ | Une erreur est survenue lors de la lecture de la playlist");
 			})
-			.on("queueEnd", async () => {
+			.on("emptyQueue", async () => {
 				await new Promise(resolve => setTimeout(resolve, 30000));
 			});
 	}
@@ -100,10 +100,7 @@ export class DiscordPlayer extends Player {
 	public static getInstance = (): Player => {
 		if (!DiscordPlayer.instance) {
 			DiscordPlayer.instance = new DiscordPlayer(DiscordClient.getInstance(), {
-				leaveOnEmpty: true,
-				quality: "high",
-				deafenOnJoin: false,
-				timeout: 0
+				autoRegisterExtractor: true
 			});
 		}
 

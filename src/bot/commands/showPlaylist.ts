@@ -18,15 +18,15 @@ const showPlaylist: DiscordCommand = {
 		embed
 			.setTitle("Valve thermostatique musicale")
 			.setDescription(
-				queue.songs.length
+				queue.tracks.toArray().length
 					? "Voici la liste des musiques qu'il reste à lire :"
 					: "Il n'y a pas de musiques dans la playlist"
 			);
 
-		queue.songs.forEach((song, index) => {
-			if (index !== 0 && !song.name.includes("renarde.m4a")) {
+		queue.tracks.toArray().forEach((song, index) => {
+			if (index !== 0 && !song.title.includes("renarde.m4a")) {
 				embed.addFields({
-					name: `${index}. ${song.name} (${song.duration})`,
+					name: `${index}. ${song.title} (${song.duration})`,
 					value: hyperlink(song.url, song.url),
 					inline: false
 				});

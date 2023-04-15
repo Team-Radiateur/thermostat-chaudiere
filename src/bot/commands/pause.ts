@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { prepareEmbed, prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 import { DiscordCommand } from "../types/discordEvents";
-import { prepareEmbed, prepareResponseToInteraction, replyToInteraction } from "../../helpers/macros";
 
 const pause: DiscordCommand = {
 	data: new SlashCommandBuilder().setName("pause").setDescription("Met la lecture en pause"),
@@ -22,7 +22,7 @@ const pause: DiscordCommand = {
 			return await replyToInteraction(interaction, embed, true);
 		}
 
-		queue.setPaused(true);
+		queue.node.setPaused(true);
 
 		return await replyToInteraction(interaction, "⏸ | La lecture est en pause");
 	}

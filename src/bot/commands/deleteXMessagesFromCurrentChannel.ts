@@ -43,7 +43,7 @@ const purgeMessages: DiscordCommand = {
 			);
 		}
 
-		const numberToDelete = interaction.options.get("nombre")?.value;
+		const numberToDelete = interaction.options.get("nombre")?.value as number;
 		const user = interaction.options.getMember("personne");
 
 		// prettier-ignore

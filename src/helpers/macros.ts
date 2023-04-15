@@ -1,7 +1,6 @@
 import {
 	CommandInteraction,
 	EmbedBuilder,
-	Guild,
 	GuildMember,
 	GuildMemberRoleManager,
 	PermissionsBitField,
@@ -94,8 +93,8 @@ export const prepareResponseToInteraction = async (interaction: CommandInteracti
 	}
 
 	const queue =
-		DiscordPlayer.getInstance().getQueue((channel.guild as Guild).id) ||
-		DiscordPlayer.getInstance().createQueue((channel.guild as Guild).id);
+		DiscordPlayer.getInstance().queues.get(channel.guild) ||
+		DiscordPlayer.getInstance().queues.create(channel.guild);
 
 	return {
 		queue,

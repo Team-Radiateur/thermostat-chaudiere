@@ -29,11 +29,11 @@ const volume: DiscordCommand = {
 		if (!newVolume) {
 			return await replyToInteraction(
 				interaction,
-				embed.setDescription(`🔉 | Le volume actuel est de ${queue.volume}%`)
+				embed.setDescription(`🔉 | Le volume actuel est de ${queue.node.volume}%`)
 			);
 		}
 
-		if (queue.setVolume(newVolume as number)) {
+		if (queue.node.setVolume(newVolume as number)) {
 			return await replyToInteraction(
 				interaction,
 				embed.setDescription(`🔉 | Le volume a été mis à ${newVolume}%`)
@@ -42,7 +42,7 @@ const volume: DiscordCommand = {
 
 		return await replyToInteraction(
 			interaction,
-			embed.setDescription(`❌ | Volume non changé (volume souhaité : ${queue.volume}`)
+			embed.setDescription(`❌ | Volume non changé (volume actuel : ${queue.node.volume}`)
 		);
 	}
 };

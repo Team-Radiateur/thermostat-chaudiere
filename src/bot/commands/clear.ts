@@ -24,7 +24,7 @@ const clear: DiscordCommand = {
 			clearList.length >= people ||
 			interaction.memberPermissions?.has([PermissionsBitField.Flags.Administrator])
 		) {
-			if (queue.skip()) {
+			if (queue.node.skip()) {
 				clearList.length = 0;
 				const embed = prepareEmbed(interaction.user)
 					.setTitle("Valve thermostatique musicale")

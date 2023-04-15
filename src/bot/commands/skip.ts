@@ -27,7 +27,7 @@ const skip: DiscordCommand = {
 			skipList.length === people ||
 			interaction.memberPermissions?.has([PermissionsBitField.Flags.Administrator])
 		) {
-			while (!queue.skip()) {
+			while (!queue.node.skip()) {
 				// Wait for the queue to skip the current track
 			}
 
@@ -36,15 +36,9 @@ const skip: DiscordCommand = {
 			return await replyToInteraction(interaction, embed.setDescription("👌 | Musique passée"), false);
 		}
 
-		let response = `⏳ | ${people - skipList.length} personnes doivent encore voter pour passer cette musique.\n`;
-
-		for (let iCharacter = 0; iCharacter < people; iCharacter++) {
-			response += "█";
-		}
-
-		for (let iCharacter = 0; iCharacter < 100 - people; iCharacter++) {
-			response += "░";
-		}
+		let response = `⏳ | ${
+			people - skipList.length
+		} personnes doivent encore voter pour passer cette musique.\n${"█".repeat(people)}${"░".repeat(100 - people)}`;
 
 		response += ` ${100 - people}% restants`;
 
